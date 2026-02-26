@@ -59,6 +59,10 @@ const StudentForm: React.FC = () => {
         throw new Error('Bitte fülle alle erforderlichen Felder aus.');
       }
 
+      if (!formData.email.endsWith('@htlwy.at')) {
+        throw new Error('Bitte verwende eine @htlwy.at E-Mail-Adresse.');
+      }
+
       const { error } = await supabase.from('students').insert([
         {
           full_name: formData.fullName,
@@ -137,7 +141,7 @@ const StudentForm: React.FC = () => {
           value={formData.email}
           onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="deine.email@example.com"
+          placeholder="deine.email@htlwy.at"
         />
       </div>
 

@@ -88,6 +88,10 @@ const AdminCoachForm: React.FC<AdminCoachFormProps> = ({ coach, onClose, onSave 
         throw new Error('Bitte fülle alle erforderlichen Felder aus.');
       }
 
+      if (!formData.email.endsWith('@htlwy.at')) {
+        throw new Error('Bitte verwende eine @htlwy.at E-Mail-Adresse.');
+      }
+
       if (coach) {
         const { error } = await supabase.from('tutors').update({
           full_name: formData.fullName,
