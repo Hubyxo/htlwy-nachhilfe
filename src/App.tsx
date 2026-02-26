@@ -7,6 +7,8 @@ import TutorApplication from './pages/TutorApplication';
 import StudentApplication from './pages/StudentApplication';
 import ApplicationForm from './pages/ApplicationForm';
 import CoachesList from './pages/CoachesList';
+import AdminLogin from './pages/AdminLogin';
+import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Impressum from './pages/Impressum';
@@ -27,6 +29,8 @@ function App() {
             <Route path="/nachhilfe-finden" element={<StudentApplication />} />
             <Route path="/nachhilfe-finden/formular" element={<ApplicationForm type="student" />} />
             <Route path="/nachhilfecoaches" element={<CoachesList />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/panel" element={<AdminPanel />} />
             <Route path="/ueber-uns" element={<About />} />
             <Route path="/kontakt" element={<Contact />} />
             <Route path="/impressum" element={<Impressum />} />
