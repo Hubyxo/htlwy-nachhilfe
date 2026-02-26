@@ -32,7 +32,7 @@ const Hero: React.FC = () => {
               to="/nachhilfe-finden"
               className="bg-blue-600 text-white hover:bg-blue-500 border border-blue-500 transition-colors px-6 py-3 rounded-md font-medium text-center"
             >
-              Nachhilfe finden
+              Coaches finden
             </Link>
           </div>
         </div>
