@@ -7,6 +7,7 @@ interface Tutor {
   id: string;
   full_name: string;
   email: string;
+  department: string;
   subjects: string[];
   school_year: string;
   availability: string | null;
@@ -18,6 +19,14 @@ const CoachesList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [selectedCoach, setSelectedCoach] = useState<Tutor | null>(null);
+
+  const departmentColors: Record<string, { bg: string; text: string }> = {
+    'Informationstechnologie': { bg: '#ec7404', text: '#fff' },
+    'Maschinenbau': { bg: '#e63233', text: '#fff' },
+    'Wirtschaftsingenieure': { bg: '#13509f', text: '#fff' },
+    'Elektrotechnik': { bg: '#fec601', text: '#000' },
+    'Mechatronik': { bg: '#97c81e', text: '#fff' },
+  };
 
   const allSubjects = [
     'Mathematik',
@@ -107,10 +116,20 @@ const CoachesList: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCoaches.map((coach) => (
+              {filteredCoaches.map((coach) => {
+                const deptColor = departmentColors[coach.department] || { bg: '#6b7280', text: '#fff' };
+                return (
                 <div key={coach.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{coach.full_name}</h3>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xl font-semibold text-gray-900">{coach.full_name}</h3>
+                      <span
+                        className="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap"
+                        style={{ backgroundColor: deptColor.bg, color: deptColor.text }}
+                      >
+                        {coach.department}
+                      </span>
+                    </div>
 
                     <div className="mb-4">
                       <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Fächer</p>
@@ -149,7 +168,8 @@ const CoachesList: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
