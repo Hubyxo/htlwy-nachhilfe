@@ -86,13 +86,14 @@ const TutorForm: React.FC = () => {
   };
 
   const generalSubjects = [
-    'Mathematik',
+    'Religion/Ethik',
     'Deutsch',
     'Englisch',
-    'Physik',
-    'Chemie',
-    'Geschichte',
-    'Geographie',
+    'Geographie, Geschichte und politische Bildung',
+    'Wirtschaft und Recht',
+    'Bewegung und Sport',
+    'Angewandte Mathematik',
+    'Naturwissenschaften',
   ];
 
   const schoolYears = [
@@ -229,7 +230,11 @@ const TutorForm: React.FC = () => {
         >
           <option value="">Bitte wählen</option>
           {departments.map((dept) => (
-            <option key={dept.name} value={dept.name} style={{ color: dept.color }}>
+            <option
+              key={dept.name}
+              value={dept.name}
+              style={{ backgroundColor: dept.color, color: dept.color === '#fec601' ? '#000' : '#fff' }}
+            >
               {dept.name}
             </option>
           ))}
@@ -241,18 +246,39 @@ const TutorForm: React.FC = () => {
           <label className="block text-sm font-medium text-gray-700 mb-3">
             Welche Fächer unterrichtest du? * (wähle mindestens eines)
           </label>
-          <div className="grid grid-cols-2 gap-3">
-            {departmentSubjects[formData.department].map((subject) => (
-              <label key={subject} className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.subjects.includes(subject)}
-                  onChange={() => handleSubjectToggle(subject)}
-                  className="w-4 h-4 text-blue-600 rounded"
-                />
-                <span className="ml-2 text-gray-700">{subject}</span>
-              </label>
-            ))}
+
+          <div className="mb-4">
+            <h4 className="font-semibold text-gray-700 mb-2 text-sm">Allgemeinbildung und Grundlagen</h4>
+            <div className="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded">
+              {generalSubjects.map((subject) => (
+                <label key={subject} className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.subjects.includes(subject)}
+                    onChange={() => handleSubjectToggle(subject)}
+                    className="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <span className="ml-2 text-gray-700">{subject}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-gray-700 mb-2 text-sm">Abteilungsspezifische Fächer</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {departmentSubjects[formData.department].map((subject) => (
+                <label key={subject} className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.subjects.includes(subject)}
+                    onChange={() => handleSubjectToggle(subject)}
+                    className="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <span className="ml-2 text-gray-700">{subject}</span>
+                </label>
+              ))}
+            </div>
           </div>
         </div>
       )}
