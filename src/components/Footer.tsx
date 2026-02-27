@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
                <li>
                 <Link to="/admin/login" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
                   <Lock className="h-4 w-4" />
-                  Verwaltung
+                  <span>Verwaltung</span>
                 </Link>
               </li>
             </ul>
