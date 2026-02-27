@@ -51,7 +51,7 @@ const TutorForm: React.FC = () => {
       'Laboratorium, Werkstätte und Produktionstechnik'
     ],
     'Mechatronik': [
-      'C',
+      'Konstruktion und Projektmanagement',
       'Mechatronische Systeme',
       'Fertigungstechnik und Mechanik',
       'Elektrotechnik und Elektronik',
