@@ -9,32 +9,25 @@ const AdminLogin: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const ADMIN_USERNAME = 'admin';
-  const ADMIN_PASSWORD = 'LsadknljadsiAdoksndv2635!';
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+  setIsLoading(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+  const { error } = await supabase.auth.signInWithPassword({
+    email: username,   // du kannst das Feld auch auf "E-Mail" umbenennen
+    password: password,
+  });
 
-    try {
-      if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
-        setError('Ungültige Benutzerdaten. Bitte versuchen Sie es erneut.');
-        setIsLoading(false);
-        return;
-      }
+  if (error) {
+    setError('Ungültige Benutzerdaten.');
+    setIsLoading(false);
+    return;
+  }
 
-      const sessionToken = `admin_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('admin_session', sessionToken);
-      localStorage.setItem('admin_login_time', new Date().toISOString());
-
-      navigate('/admin/panel');
-    } catch (err) {
-      setError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  navigate('/admin/panel');
+  setIsLoading(false);
+};
 
   return (
     <div className="pt-20 pb-16 bg-gradient-to-br from-blue-900 to-blue-700 min-h-screen flex items-center justify-center px-4">
