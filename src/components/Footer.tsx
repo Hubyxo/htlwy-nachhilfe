@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
                 <a href="https://www.htlwy.at" className="hover:text-blue-300 transition-colors">www.htlwy.at</a>
               </li>
                <li>
-                <Link to="/admin/login" className="hover:text-blue-300 transition-colors">
+                <Link to="/admin/login" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
                   <Lock className="h-4 w-4" />
                   Verwaltung
                 </Link>
