@@ -74,9 +74,7 @@ const Footer: React.FC = () => {
                 <Link to="/datenschutz" className="hover:text-blue-300 transition-colors">Datenschutzerklärung</Link>
               </li>
               <li>
-                <Link to="/admin/login" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                  <Lock className="h-4 w-4" />
-                  Verwaltung
+                <Link to="/admin/login" className="flex items-center gap-1 hover:text-blue-300 transition-colors">                  Verwaltung
                 </Link>
               </li>
             </ul>
