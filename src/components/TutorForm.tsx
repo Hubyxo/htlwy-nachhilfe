@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Check, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
+type Department = 'Informationstechnologie' | 'Maschinenbau' | 'Mechatronik' | 'Elektrotechnik' | 'Wirtschaftsingenieure' | '';
+
 const TutorForm: React.FC = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    department: '' as Department,
     subjects: [] as string[],
     schoolYear: '',
     availability: '',
@@ -16,7 +19,73 @@ const TutorForm: React.FC = () => {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const subjects = [
+  const departments: { name: Department; color: string }[] = [
+    { name: 'Informationstechnologie', color: '#ec7404' },
+    { name: 'Maschinenbau', color: '#e63233' },
+    { name: 'Wirtschaftsingenieure', color: '#13509f' },
+    { name: 'Elektrotechnik', color: '#fec601' },
+    { name: 'Mechatronik', color: '#97c81e' },
+  ];
+
+  const departmentSubjects: Record<Department, string[]> = {
+    'Informationstechnologie': [
+      'Softwareentwicklung',
+      'Informationstechnische Projekte',
+      'Informationssysteme',
+      'Systemtechnik',
+      'Cloud Computing und industrielle Technologien',
+      'Medientechnik',
+      'Netzwerktechnik',
+      'IT-Sicherheit',
+      'Computerpraktikum'
+    ],
+    'Maschinenbau': [
+      'Konstruktion und Projektmanagement',
+      'Technische Mechanik und Berechnung',
+      'Fertigungstechnik',
+      'Maschinen und Anlagen',
+      'Automatisierungstechnik',
+      'Elektrotechnik und Elektronik',
+      'Angewandte Informatik und Informationstechnik',
+      'Robotik und Prozessdatenverarbeitung',
+      'Laboratorium, Werkstätte und Produktionstechnik'
+    ],
+    'Mechatronik': [
+      'C',
+      'Mechatronische Systeme',
+      'Fertigungstechnik und Mechanik',
+      'Elektrotechnik und Elektronik',
+      'Informationstechnik und Automatisierung',
+      'Produktionstechnik',
+      'Laboratorium',
+      'Werkstätte und Produktionstechnik',
+      'Betriebspraxis'
+    ],
+    'Elektrotechnik': [
+      'Energiesysteme',
+      'Automatisierungstechnik',
+      'Antriebstechnik',
+      'Industrieelektronik',
+      'Fachspezifische Informationstechnik',
+      'Computergestützte Projektentwicklung',
+      'Erneuerbare Energien und Elektromobilität',
+      'Robotik und Systems Connectivity',
+      'Laboratorium, Werkstätte und Produktionstechnik'
+    ],
+    'Wirtschaftsingenieure': [
+      'Unternehmensführung / Wirtschaftsrecht',
+      'Betriebstechnik',
+      'Information und Informationssysteme',
+      'Konstruktion und Berechnung',
+      'Werkstoff -und Fertigungstechnik',
+      'Maschinen, Anlagen, Automatisierung',
+      'Laboratorium',
+      'Werkstätte und Produktionstechnik'
+    ],
+    '': []
+  };
+
+  const generalSubjects = [
     'Mathematik',
     'Deutsch',
     'Englisch',
@@ -24,11 +93,6 @@ const TutorForm: React.FC = () => {
     'Chemie',
     'Geschichte',
     'Geographie',
-    'Informationstechnische Fächer',
-    'Maschinenbautechnische Fächer',
-    'Wirtschaftliche Fächer',
-    'Mechatronische Fächer',
-    'Elektrotechnische Fächer'
   ];
 
   const schoolYears = [
@@ -55,7 +119,7 @@ const TutorForm: React.FC = () => {
     setErrorMessage('');
 
     try {
-      if (!formData.fullName.trim() || !formData.email.trim() || formData.subjects.length === 0) {
+      if (!formData.fullName.trim() || !formData.email.trim() || !formData.department || formData.subjects.length === 0) {
         throw new Error('Bitte fülle alle erforderlichen Felder aus.');
       }
 
@@ -67,6 +131,7 @@ const TutorForm: React.FC = () => {
         {
           full_name: formData.fullName,
           email: formData.email,
+          department: formData.department,
           subjects: formData.subjects,
           school_year: formData.schoolYear,
           availability: formData.availability,
@@ -80,6 +145,7 @@ const TutorForm: React.FC = () => {
       setFormData({
         fullName: '',
         email: '',
+        department: '',
         subjects: [],
         schoolYear: '',
         availability: '',
@@ -146,23 +212,50 @@ const TutorForm: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Welche Fächer unterrichtest du? * (wähle mindestens eines)
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Abteilung *
         </label>
-        <div className="grid grid-cols-2 gap-3">
-          {subjects.map((subject) => (
-            <label key={subject} className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.subjects.includes(subject)}
-                onChange={() => handleSubjectToggle(subject)}
-                className="w-4 h-4 text-blue-600 rounded"
-              />
-              <span className="ml-2 text-gray-700">{subject}</span>
-            </label>
+        <select
+          value={formData.department}
+          onChange={(e) => {
+            const newDept = e.target.value as Department;
+            setFormData(prev => ({
+              ...prev,
+              department: newDept,
+              subjects: []
+            }));
+          }}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value="">Bitte wählen</option>
+          {departments.map((dept) => (
+            <option key={dept.name} value={dept.name} style={{ color: dept.color }}>
+              {dept.name}
+            </option>
           ))}
-        </div>
+        </select>
       </div>
+
+      {formData.department && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Welche Fächer unterrichtest du? * (wähle mindestens eines)
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            {departmentSubjects[formData.department].map((subject) => (
+              <label key={subject} className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.subjects.includes(subject)}
+                  onChange={() => handleSubjectToggle(subject)}
+                  className="w-4 h-4 text-blue-600 rounded"
+                />
+                <span className="ml-2 text-gray-700">{subject}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
