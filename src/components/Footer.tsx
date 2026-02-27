@@ -49,6 +49,12 @@ const Footer: React.FC = () => {
                 <ExternalLink className="h-5 w-5 mr-2 text-blue-300 flex-shrink-0" />
                 <a href="https://www.htlwy.at" className="hover:text-blue-300 transition-colors">www.htlwy.at</a>
               </li>
+               <li>
+                <Link to="/admin/login" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
+                  <Lock className="h-4 w-4" />
+                  Verwaltung
+                </Link>
+              </li>
             </ul>
           </div>
           
@@ -72,12 +78,6 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link to="/datenschutz" className="hover:text-blue-300 transition-colors">Datenschutzerklärung</Link>
-              </li>
-              <li>
-                <Link to="/admin/login" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                  <Lock className="h-4 w-4" />
-                  Verwaltung
-                </Link>
               </li>
             </ul>
           </div>
