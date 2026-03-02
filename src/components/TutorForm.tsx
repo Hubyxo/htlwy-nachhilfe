@@ -213,7 +213,7 @@ const TutorForm: React.FC = () => {
           value={formData.email}
           onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="deine.email@htlwy.at"
+          placeholder="vorname.nachname@htlwy.at"
         />
       </div>
 
