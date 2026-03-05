@@ -1,8 +1,11 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useIsAuthenticated } from '@azure/msal-react';
 
 const Hero: React.FC = () => {
+  const isAuthenticated = useIsAuthenticated();
+
   return (
     <div className="relative bg-gradient-to-br from-blue-900 to-blue-700 text-white">
       {/* Decorative elements */}
@@ -20,21 +23,31 @@ const Hero: React.FC = () => {
           <p className="text-lg md:text-xl text-blue-100 mb-8">
             Entdecke das Nachhilfeprogramm der HTL Waidhofen/Ybbs. Werde Nachhilfecoach oder finde die Unterstützung, die du brauchst.
           </p>
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          {isAuthenticated ? (
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <Link
+                to="/tutor-werden"
+                className="bg-white text-blue-700 hover:bg-gray-100 transition-colors px-6 py-3 rounded-md font-medium text-center flex items-center justify-center"
+              >
+                <span>Nachhilfecoach werden</span>
+                <ArrowRight size={16} className="ml-2" />
+              </Link>
+              <Link
+                to="/nachhilfecoaches"
+                className="bg-blue-600 text-white hover:bg-blue-500 border border-blue-500 transition-colors px-6 py-3 rounded-md font-medium text-center"
+              >
+                Verfügbare Coaches
+              </Link>
+            </div>
+          ) : (
             <Link
-              to="/tutor-werden"
-              className="bg-white text-blue-700 hover:bg-gray-100 transition-colors px-6 py-3 rounded-md font-medium text-center flex items-center justify-center"
+              to="/login"
+              className="inline-flex items-center justify-center bg-white text-blue-700 hover:bg-gray-100 transition-colors px-8 py-4 rounded-md font-medium"
             >
-              <span>Nachhilfecoach werden</span>
-              <ArrowRight size={16} className="ml-2" />
+              <span>Anmelden</span>
+              <ArrowRight size={20} className="ml-2" />
             </Link>
-            <Link
-              to="/nachhilfecoaches"
-              className="bg-blue-600 text-white hover:bg-blue-500 border border-blue-500 transition-colors px-6 py-3 rounded-md font-medium text-center"
-            >
-              Verfügbare Coaches
-            </Link>
-          </div>
+          )}
         </div>
       </div>
     </div>

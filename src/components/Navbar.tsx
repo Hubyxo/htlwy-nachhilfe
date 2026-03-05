@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
+import { useIsAuthenticated } from '@azure/msal-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const isAuthenticated = useIsAuthenticated();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,7 +32,12 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  const navLinks = [
+  const publicNavLinks = [
+    { name: 'Über uns', path: '/ueber-uns' },
+    { name: 'Kontakt', path: '/kontakt' },
+  ];
+
+  const authenticatedNavLinks = [
     { name: 'Startseite', path: '/' },
     { name: 'Nachhilfecoach werden', path: '/tutor-werden' },
     { name: 'Nachhilfecoaches', path: '/nachhilfecoaches' },
@@ -36,9 +45,7 @@ const Navbar: React.FC = () => {
     { name: 'Kontakt', path: '/kontakt' },
   ];
 
-  const getSignUpPath = () => {
-    return '/tutor-werden/formular';
-  };
+  const navLinks = isAuthenticated ? authenticatedNavLinks : publicNavLinks;
 
   return (
     <header
@@ -66,12 +73,25 @@ const Navbar: React.FC = () => {
                 {link.name}
               </Link>
             ))}
-            <Link
-              to={getSignUpPath()}
-              className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-            >
-              Jetzt anmelden
-            </Link>
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-700">{user?.display_name}</span>
+                <button
+                  onClick={logout}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  <LogOut size={18} />
+                  <span className="text-sm font-medium">Abmelden</span>
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                Anmelden
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Navigation Button */}
@@ -109,13 +129,31 @@ const Navbar: React.FC = () => {
                 {link.name}
               </Link>
             ))}
-            <Link
-              to={getSignUpPath()}
-              onClick={closeMenu}
-              className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors text-base font-medium text-center"
-            >
-              Nachhilfe finden
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <div className="py-2 text-base text-gray-700 border-t pt-4">
+                  {user?.display_name}
+                </div>
+                <button
+                  onClick={() => {
+                    logout();
+                    closeMenu();
+                  }}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors py-2"
+                >
+                  <LogOut size={18} />
+                  <span className="text-base font-medium">Abmelden</span>
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={closeMenu}
+                className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors text-base font-medium text-center"
+              >
+                Anmelden
+              </Link>
+            )}
           </div>
         </div>
       </div>
