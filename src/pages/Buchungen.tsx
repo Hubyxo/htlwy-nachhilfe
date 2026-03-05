@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { Clock, XCircle, ClipboardList, AlertCircle } from 'lucide-react';
+import { Clock, Circle as XCircle, ClipboardList, CircleAlert as AlertCircle } from 'lucide-react';
 
 interface PendingBooking {
   id: string;
