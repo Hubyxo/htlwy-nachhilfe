@@ -32,7 +32,7 @@ const TutorApplication: React.FC = () => {
                 <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Erhalte mindestens 10€ pro Stunde für deinen Unterricht</span>
+                <span>Erhalte ca. 10€ oder mehr pro Stunde für deinen Unterricht</span>
               </li>
               <li className="flex items-start">
                 <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
