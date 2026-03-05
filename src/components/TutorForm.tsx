@@ -24,29 +24,19 @@ const TutorForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        setFormData(prev => ({
-          ...prev,
-          fullName: user.display_name || '',
-          email: user.email || '',
-          department: (parsedClass?.department || '') as Department,
-          classCode: parsedClass?.classCode || '',
-          schoolYear: parsedClass?.schoolYear || '',
-        }));
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
+    setFormData(prev => ({
+      ...prev,
+      fullName: user.display_name || '',
+      email: user.email || '',
+      department: (parsedClass?.department || '') as Department,
+      classCode: parsedClass?.classCode || '',
+      schoolYear: parsedClass?.schoolYear || '',
+    }));
+    setIsLoading(false);
   }, [user, parsedClass]);
 
   const departments: { name: Department; color: string }[] = [
@@ -67,7 +57,7 @@ const TutorForm: React.FC = () => {
       'Medientechnik',
       'Netzwerktechnik',
       'IT-Sicherheit',
-      'Computerpraktikum'
+      'Computerpraktikum',
     ],
     'Maschinenbau': [
       'Konstruktion und Projektmanagement',
@@ -78,7 +68,7 @@ const TutorForm: React.FC = () => {
       'Elektrotechnik und Elektronik',
       'Angewandte Informatik und Informationstechnik',
       'Robotik und Prozessdatenverarbeitung',
-      'Laboratorium, Werkstätte und Produktionstechnik'
+      'Laboratorium, Werkstätte und Produktionstechnik',
     ],
     'Mechatronik': [
       'Konstruktion und Projektmanagement',
@@ -89,7 +79,7 @@ const TutorForm: React.FC = () => {
       'Produktionstechnik',
       'Laboratorium',
       'Werkstätte und Produktionstechnik',
-      'Betriebspraxis'
+      'Betriebspraxis',
     ],
     'Elektrotechnik': [
       'Energiesysteme',
@@ -100,7 +90,7 @@ const TutorForm: React.FC = () => {
       'Computergestützte Projektentwicklung',
       'Erneuerbare Energien und Elektromobilität',
       'Robotik und Systems Connectivity',
-      'Laboratorium, Werkstätte und Produktionstechnik'
+      'Laboratorium, Werkstätte und Produktionstechnik',
     ],
     'Wirtschaftsingenieure': [
       'Unternehmensführung / Wirtschaftsrecht',
@@ -110,9 +100,9 @@ const TutorForm: React.FC = () => {
       'Werkstoff -und Fertigungstechnik',
       'Maschinen, Anlagen, Automatisierung',
       'Laboratorium',
-      'Werkstätte und Produktionstechnik'
+      'Werkstätte und Produktionstechnik',
     ],
-    '': []
+    '': [],
   };
 
   const generalSubjects = [
@@ -133,6 +123,10 @@ const TutorForm: React.FC = () => {
     '4. Jahrgang',
     '5. Jahrgang',
   ];
+
+  const handleDepartmentChange = (dept: Department) => {
+    setFormData(prev => ({ ...prev, department: dept, subjects: [] }));
+  };
 
   const handleSubjectToggle = (subject: string) => {
     setFormData(prev => ({
@@ -204,7 +198,7 @@ const TutorForm: React.FC = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-8">
       {submitStatus === 'success' && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
           <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
@@ -227,182 +221,175 @@ const TutorForm: React.FC = () => {
         </div>
       )}
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Vollständiger Name *
-        </label>
-        <input
-          type="text"
-          value={formData.fullName}
-          readOnly
-          className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
-          placeholder="Dein Name"
-        />
-        <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          E-Mail-Adresse *
-        </label>
-        <input
-          type="email"
-          value={formData.email}
-          readOnly
-          className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
-          placeholder="vorname.nachname@htlwy.at"
-        />
-        <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Klasse
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Vollständiger Name *</label>
           <input
             type="text"
-            value={formData.classCode}
-            readOnly={!!parsedClass}
-            onChange={(e) => !parsedClass && setFormData(prev => ({ ...prev, classCode: e.target.value }))}
-            placeholder="z.B. 3AHET"
-            className={`w-full px-4 py-2 border border-gray-300 rounded-md ${parsedClass ? 'bg-gray-50 text-gray-700 cursor-not-allowed' : 'focus:ring-2 focus:ring-blue-500 focus:border-transparent'}`}
+            value={formData.fullName}
+            readOnly
+            className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
           />
-          {parsedClass && <p className="text-xs text-gray-500 mt-1">Aus deiner HTL-E-Mail-Adresse ermittelt</p>}
+          <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Abteilung *
-          </label>
-          {parsedClass ? (
-            <>
-              <input
-                type="text"
-                value={formData.department}
-                readOnly
-                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
-              />
-              <p className="text-xs text-gray-500 mt-1">Aus deiner HTL-E-Mail-Adresse ermittelt</p>
-            </>
-          ) : (
-            <select
-              value={formData.department}
-              onChange={(e) => {
-                const newDept = e.target.value as Department;
-                setFormData(prev => ({
-                  ...prev,
-                  department: newDept,
-                  subjects: []
-                }));
-              }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">Bitte wählen</option>
-              {departments.map((dept) => (
-                <option key={dept.name} value={dept.name}>
+          <label className="block text-sm font-medium text-gray-700 mb-2">E-Mail-Adresse *</label>
+          <input
+            type="email"
+            value={formData.email}
+            readOnly
+            className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+          />
+          <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-3">Abteilung *</label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {departments.map((dept) => {
+            const selected = formData.department === dept.name;
+            return (
+              <button
+                key={dept.name}
+                type="button"
+                onClick={() => handleDepartmentChange(dept.name)}
+                className={`relative flex items-center gap-3 px-4 py-3 rounded-lg border-2 text-left transition-all ${
+                  selected
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                <span
+                  className="w-3 h-3 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: dept.color }}
+                />
+                <span className={`text-sm font-medium ${selected ? 'text-blue-800' : 'text-gray-700'}`}>
                   {dept.name}
-                </option>
-              ))}
-            </select>
-          )}
+                </span>
+                {selected && (
+                  <Check className="h-4 w-4 text-blue-500 absolute top-2 right-2" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-3">Jahrgang *</label>
+        <div className="flex flex-wrap gap-3">
+          {schoolYears.map((year) => {
+            const selected = formData.schoolYear === year;
+            return (
+              <button
+                key={year}
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, schoolYear: year }))}
+                className={`px-5 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
+                  selected
+                    ? 'border-blue-500 bg-blue-50 text-blue-800'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                {year}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {formData.department && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Welche Fächer unterrichtest du? * (wähle mindestens eines)
+            Welche Fächer unterrichtest du? * <span className="text-gray-400 font-normal">(mindestens eines)</span>
           </label>
 
-          <div className="mb-4">
-            <h4 className="font-semibold text-gray-700 mb-2 text-sm">Allgemeinbildung und Grundlagen</h4>
-            <div className="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded">
-              {generalSubjects.map((subject) => (
-                <label key={subject} className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.subjects.includes(subject)}
-                    onChange={() => handleSubjectToggle(subject)}
-                    className="w-4 h-4 text-blue-600 rounded"
-                  />
-                  <span className="ml-2 text-gray-700">{subject}</span>
-                </label>
-              ))}
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Allgemeinbildung und Grundlagen
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {generalSubjects.map((subject) => {
+                  const checked = formData.subjects.includes(subject);
+                  return (
+                    <label
+                      key={subject}
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg border cursor-pointer transition-all ${
+                        checked
+                          ? 'border-blue-300 bg-blue-50'
+                          : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => handleSubjectToggle(subject)}
+                        className="w-4 h-4 text-blue-600 rounded accent-blue-600"
+                      />
+                      <span className={`text-sm ${checked ? 'text-blue-800 font-medium' : 'text-gray-700'}`}>
+                        {subject}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h4 className="font-semibold text-gray-700 mb-2 text-sm">Abteilungsspezifische Fächer</h4>
-            <div className="grid grid-cols-2 gap-3">
-              {departmentSubjects[formData.department].map((subject) => (
-                <label key={subject} className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.subjects.includes(subject)}
-                    onChange={() => handleSubjectToggle(subject)}
-                    className="w-4 h-4 text-blue-600 rounded"
-                  />
-                  <span className="ml-2 text-gray-700">{subject}</span>
-                </label>
-              ))}
+            <div>
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                Abteilungsspezifische Fächer
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {departmentSubjects[formData.department].map((subject) => {
+                  const checked = formData.subjects.includes(subject);
+                  return (
+                    <label
+                      key={subject}
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg border cursor-pointer transition-all ${
+                        checked
+                          ? 'border-blue-300 bg-blue-50'
+                          : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => handleSubjectToggle(subject)}
+                        className="w-4 h-4 text-blue-600 rounded accent-blue-600"
+                      />
+                      <span className={`text-sm ${checked ? 'text-blue-800 font-medium' : 'text-gray-700'}`}>
+                        {subject}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Schulstufe
-        </label>
-        {parsedClass ? (
-          <>
-            <input
-              type="text"
-              value={formData.schoolYear}
-              readOnly
-              className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
-            />
-            <p className="text-xs text-gray-500 mt-1">Aus deiner HTL-E-Mail-Adresse ermittelt</p>
-          </>
-        ) : (
-          <select
-            value={formData.schoolYear}
-            onChange={(e) => setFormData(prev => ({ ...prev, schoolYear: e.target.value }))}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="">Bitte wählen</option>
-            {schoolYears.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Verfügbarkeit / Zeitfenster
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Verfügbarkeit / Zeitfenster</label>
         <textarea
           value={formData.availability}
           onChange={(e) => setFormData(prev => ({ ...prev, availability: e.target.value }))}
           placeholder="z.B. Mo-Fr nach 16:00 Uhr, Sa ganztägig"
           rows={3}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Zusätzliche Informationen
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Zusätzliche Informationen</label>
         <textarea
           value={formData.additionalInfo}
           onChange={(e) => setFormData(prev => ({ ...prev, additionalInfo: e.target.value }))}
           placeholder="Erzähle uns mehr über dich, deine Stärken oder spezielle Erfahrungen..."
           rows={4}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
         />
       </div>
 
