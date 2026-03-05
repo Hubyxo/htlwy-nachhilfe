@@ -2,9 +2,11 @@ import { Configuration, LogLevel, PublicClientApplication } from '@azure/msal-br
 
 const getRedirectUri = () => {
   if (typeof window !== 'undefined') {
-    return window.location.origin;
+    const origin = window.location.origin;
+    // Add trailing slash for consistency with Azure configuration
+    return origin + '/';
   }
-  return 'https://htlwy-nachhilfe.netlify.app';
+  return 'https://nachhilfe.htlwy.com/';
 };
 
 export const msalConfig: Configuration = {
