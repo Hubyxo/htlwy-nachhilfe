@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useMsal } from '@azure/msal-react';
+import { useNavigate } from 'react-router-dom';
 import { loginRequest } from '../lib/msalConfig';
 import { Heater as Hero } from 'lucide-react';
 
 const Login: React.FC = () => {
-  const { instance } = useMsal();
+  const { instance, accounts } = useMsal();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (accounts.length > 0) {
+      navigate('/');
+    }
+  }, [accounts, navigate]);
 
   const handleLogin = async () => {
     try {
