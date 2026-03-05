@@ -9,7 +9,7 @@ const Impressum: React.FC = () => {
           
           <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
             <p className="text-gray-600 mb-6">
-              Diese Seite dient als Impressum für nachhilfe-htlwy.netlify.app
+              Diese Seite dient als Impressum für die Nachhilfeplattform der HTBluVa Waidhofen/Ybbs 
             </p>
 
             <div className="space-y-8">
