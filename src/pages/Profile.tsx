@@ -100,17 +100,27 @@ const Profile: React.FC = () => {
   }, [user, coachProfile, isCoach]);
 
 const handleDeleteProfile = async () => {
-  if (!coachProfile || !user) return;
+  if (!coachProfile || !user) {
+    alert('coachProfile oder user ist null');
+    return;
+  }
   setDeleteLoading(true);
   try {
-    const { error } = await supabase.rpc('delete_own_coach_profile');
-    if (error) throw error;
+    await supabase.from('bookings').update({ status: 'cancelled' }).eq('coach_id', coachProfile.id).eq('status', 'pending');
+    
+    const { error: cpError } = await supabase.from('coach_profiles').delete().eq('id', coachProfile.id).eq('user_id', user.id);
+    if (cpError) throw cpError;
 
+    const { error: tError } = await supabase.from('tutors').delete().eq('email', user.email);
+    if (tError) throw tError;
+
+    await supabase.from('users').update({ role: 'student' }).eq('id', user.id);
     setDeleteSuccess(true);
     setDeleteProfileModal(false);
     setTimeout(() => window.location.reload(), 1500);
-  } catch (err) {
-    console.error('Fehler beim Löschen des Profils:', err);
+  } catch (err: any) {
+    alert('Fehler: ' + JSON.stringify(err));
+    console.error(err);
   } finally {
     setDeleteLoading(false);
   }
