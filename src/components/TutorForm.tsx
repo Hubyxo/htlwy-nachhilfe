@@ -180,6 +180,8 @@ const TutorForm: React.FC = () => {
           { onConflict: 'user_id' }
         );
         if (profileError) throw profileError;
+
+        await supabase.from('users').update({ role: 'coach' }).eq('id', user.id);
       }
 
       setSubmitStatus('success');
