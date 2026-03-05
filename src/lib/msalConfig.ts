@@ -14,7 +14,7 @@ export const msalConfig: Configuration = {
     authority: import.meta.env.VITE_AZURE_AUTHORITY || 'https://login.microsoftonline.com/6dd5291a-610e-4172-a7b6-9a7dc57e9a2a',
     redirectUri: getRedirectUri(),
     postLogoutRedirectUri: getRedirectUri(),
-    navigateToLoginRequestUrl: false,
+    navigateToLoginRequestUrl: true,
   },
   cache: {
     cacheLocation: 'localStorage',

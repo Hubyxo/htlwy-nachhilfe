@@ -11,18 +11,25 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (accounts.length > 0) {
-      navigate('/');
-    }
+    const checkAuth = async () => {
+      if (accounts.length > 0) {
+        const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/';
+        sessionStorage.removeItem('redirectAfterLogin');
+        navigate(redirectPath);
+      }
+    };
+    checkAuth();
   }, [accounts, navigate]);
 
   const handleLogin = async () => {
     setError(null);
     setIsLoading(true);
     try {
+      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
       await instance.loginRedirect({
         ...loginRequest,
         prompt: 'select_account',
+        redirectStartPage: window.location.href,
       });
     } catch (e: any) {
       console.error('Login failed:', e);
