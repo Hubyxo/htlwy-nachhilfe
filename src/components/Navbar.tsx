@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
 
   const profileMenuItems = [
     { label: 'Mein Profil', path: '/profil', icon: User, coachOnly: false },
-    { label: 'Buchungsanfragen', path: '/meine-coachings', icon: ClipboardList, coachOnly: true },
+    { label: 'Meine Coachings', path: '/meine-coachings', icon: ClipboardList, coachOnly: true },
     { label: 'Meine Coaches', path: '/meine-coaches', icon: GraduationCap, coachOnly: false },
   ].filter((item) => !item.coachOnly || user?.role === 'coach' || !!coachProfile);
 

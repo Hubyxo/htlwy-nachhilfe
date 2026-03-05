@@ -193,14 +193,14 @@ const MyCoachings: React.FC = () => {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-3 mb-2">
             <Users size={28} className="text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Buchungsanfragen</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Meine Coachings</h1>
             {pendingCount > 0 && (
               <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full">
                 {pendingCount} neu
               </span>
             )}
           </div>
-          <p className="text-gray-500 mb-8">Übersicht aller Schüler, die dein Coaching angefragt haben</p>
+          <p className="text-gray-500 mb-8">Übersicht aller Schüler, die dich als Coach gebucht haben</p>
 
           <div className="flex flex-wrap gap-2 mb-6">
             {filters.map((f) => (

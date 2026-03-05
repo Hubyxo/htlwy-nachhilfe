@@ -49,8 +49,24 @@ const AdminPanel: React.FC = () => {
   const handleDelete = async (id: string) => {
     setIsDeleting(true);
     try {
+      const coach = coaches.find(c => c.id === id);
+
       const { error } = await supabase.from('tutors').delete().eq('id', id);
       if (error) throw error;
+
+      if (coach?.email) {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('id')
+          .eq('email', coach.email)
+          .maybeSingle();
+
+        if (userData?.id) {
+          await supabase.from('coach_profiles').delete().eq('user_id', userData.id);
+          await supabase.from('users').update({ role: 'student' }).eq('id', userData.id);
+        }
+      }
+
       setCoaches(coaches.filter(c => c.id !== id));
       setDeleteConfirm(null);
     } catch (err) {
