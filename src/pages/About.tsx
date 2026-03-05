@@ -140,7 +140,7 @@ const About: React.FC = () => {
               <div>
                 <h3 className="font-medium text-gray-800 mb-2">Wie werde ich Coach?</h3>
                 <p className="text-gray-600">
-                  Nach der Anmeldung kannst du unter "Nachhilfecoach werden" ein Profil anlegen. Das Profil wird vom Admin freigeschalten, danach bist du in der Coach-Liste sichtbar.
+                  Nach der Anmeldung kannst du unter "Nachhilfecoach werden" ein Profil anlegen. Danach bist du direkt und ohne Warten in der Coach-Liste sichtbar.
                 </p>
               </div>
 
