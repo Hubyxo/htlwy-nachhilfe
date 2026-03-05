@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { BookOpen, CircleCheck as CheckCircle, Star, Clock, TrendingUp, Award, User } from 'lucide-react';
+import { BookOpen, CircleCheck as CheckCircle, Star, Clock, TrendingUp, Award, User, Trash2, AlertTriangle, X } from 'lucide-react';
 
 interface Stats {
   activeCoachings: number;
@@ -44,6 +44,9 @@ const Profile: React.FC = () => {
   const { user, coachProfile } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleteProfileModal, setDeleteProfileModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   const isCoach = user?.role === 'coach';
 
@@ -96,6 +99,24 @@ const Profile: React.FC = () => {
     fetchStats();
   }, [user, coachProfile, isCoach]);
 
+  const handleDeleteProfile = async () => {
+    if (!coachProfile || !user) return;
+    setDeleteLoading(true);
+    try {
+      await supabase.from('bookings').update({ status: 'cancelled' }).eq('coach_id', coachProfile.id).eq('status', 'pending');
+      const { error } = await supabase.from('coach_profiles').delete().eq('id', coachProfile.id).eq('user_id', user.id);
+      if (error) throw error;
+      await supabase.from('users').update({ role: 'student' }).eq('id', user.id);
+      setDeleteSuccess(true);
+      setDeleteProfileModal(false);
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (err) {
+      console.error('Fehler beim Löschen des Profils:', err);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 pt-24 pb-8 flex items-center justify-center">
@@ -105,6 +126,7 @@ const Profile: React.FC = () => {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 pt-24 pb-12">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
@@ -227,8 +249,114 @@ const Profile: React.FC = () => {
             </div>
           </div>
         )}
+
+        {isCoach && coachProfile && (
+          <div className="mt-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <BookOpen size={20} className="text-blue-600" />
+              Mein Coach-Profil
+            </h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Abteilung</p>
+                  <p className="text-sm font-semibold text-gray-800">{coachProfile.department}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Klasse</p>
+                  <p className="text-sm font-semibold text-gray-800">{coachProfile.class}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Verfügbarkeit</p>
+                  <p className="text-sm text-gray-700">{coachProfile.availability}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Fächer</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {coachProfile.subjects.map((s) => (
+                      <span key={s} className="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">{s}</span>
+                    ))}
+                  </div>
+                </div>
+                {coachProfile.additional_info && (
+                  <div className="sm:col-span-2">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Zusätzliche Infos</p>
+                    <p className="text-sm text-gray-700">{coachProfile.additional_info}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-5 border-t border-gray-100">
+                <p className="text-sm text-gray-500 mb-3">
+                  Du möchtest kein Coach mehr sein? Du kannst dein Profil löschen. Laufende Coachings bleiben bestehen, offene Anfragen werden storniert.
+                </p>
+                <button
+                  onClick={() => setDeleteProfileModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                >
+                  <Trash2 size={15} />
+                  Coach-Profil löschen
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {deleteSuccess && (
+          <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700 font-medium">
+            Coach-Profil wurde gelöscht. Du wirst als Schüler weitergeführt.
+          </div>
+        )}
       </div>
     </div>
+
+    {deleteProfileModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle size={20} className="text-red-600" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-bold text-gray-900">Coach-Profil löschen</h2>
+              <p className="text-sm text-gray-500">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+            </div>
+            <button
+              onClick={() => setDeleteProfileModal(false)}
+              className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <X size={18} className="text-gray-400" />
+            </button>
+          </div>
+
+          <div className="bg-red-50 rounded-xl p-4 mb-5 text-sm text-red-700 space-y-1">
+            <p className="font-medium">Was passiert beim Löschen:</p>
+            <ul className="list-disc list-inside space-y-0.5 text-red-600">
+              <li>Dein Coach-Profil wird dauerhaft entfernt</li>
+              <li>Offene Buchungsanfragen werden storniert</li>
+              <li>Dein Konto wird auf "Schüler" zurückgesetzt</li>
+            </ul>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setDeleteProfileModal(false)}
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+            >
+              Abbrechen
+            </button>
+            <button
+              onClick={handleDeleteProfile}
+              disabled={deleteLoading}
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors disabled:opacity-60"
+            >
+              {deleteLoading ? 'Wird gelöscht...' : 'Profil löschen'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 

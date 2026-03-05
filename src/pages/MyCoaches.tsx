@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { GraduationCap, Mail, CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, Star, MessageCircle } from 'lucide-react';
+import { GraduationCap, Mail, CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, Star, MessageCircle, MessageSquare } from 'lucide-react';
 
 interface CoachProfile {
   id: string;
@@ -25,6 +25,7 @@ interface BookedCoach {
   bookingId: string;
   status: string;
   created_at: string;
+  completed_reason: string | null;
   coach: CoachProfile;
   coachUser: CoachUser;
 }
@@ -76,9 +77,9 @@ const MyCoaches: React.FC = () => {
       try {
         const { data: bookings, error } = await supabase
           .from('bookings')
-          .select('id, coach_id, status, created_at')
+          .select('id, coach_id, status, created_at, completed_reason')
           .eq('student_id', user.id)
-          .eq('status', 'confirmed')
+          .in('status', ['confirmed', 'completed'])
           .order('created_at', { ascending: false });
 
         if (error || !bookings) return;
@@ -104,6 +105,7 @@ const MyCoaches: React.FC = () => {
               bookingId: booking.id,
               status: booking.status,
               created_at: booking.created_at,
+              completed_reason: booking.completed_reason ?? null,
               coach: coach || ({} as CoachProfile),
               coachUser: coachUser || { id: '', email: '', display_name: 'Unbekannt' },
             };
@@ -242,23 +244,37 @@ const MyCoaches: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                      <MessageCircle size={15} className="text-blue-500" />
+                  {entry.status === 'confirmed' && (
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <MessageCircle size={15} className="text-blue-500" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm text-gray-600">
+                          Schreib <span className="font-medium">{entry.coachUser.display_name}</span> eine E-Mail, um die Nachhilfe zu besprechen:
+                        </p>
+                        <a
+                          href={`mailto:${entry.coachUser.email}`}
+                          className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline mt-0.5 transition-colors"
+                        >
+                          <Mail size={13} />
+                          {entry.coachUser.email}
+                        </a>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm text-gray-600">
-                        Schreib <span className="font-medium">{entry.coachUser.display_name}</span> eine E-Mail, um die Nachhilfe zu besprechen:
-                      </p>
-                      <a
-                        href={`mailto:${entry.coachUser.email}`}
-                        className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline mt-0.5 transition-colors"
-                      >
-                        <Mail size={13} />
-                        {entry.coachUser.email}
-                      </a>
+                  )}
+
+                  {entry.status === 'completed' && entry.completed_reason && (
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <MessageSquare size={14} className="text-gray-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium mb-0.5">Abschlusskommentar des Coaches</p>
+                        <p className="text-sm text-gray-600 italic">"{entry.completed_reason}"</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
