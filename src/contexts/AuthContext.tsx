@@ -8,6 +8,7 @@ export type { Department };
 
 interface UserProfile {
   id: string;
+  class_code?: string | null;
   email: string;
   display_name: string;
   profile_image_url?: string;
@@ -38,6 +39,31 @@ interface AuthContextType {
   parsedClass: ParsedUserClass | null;
   isLoading: boolean;
   logout: () => void;
+const CLASS_CODE_PATTERN = /^[1-5][A-Z]{1,2}(HIT|HMBA|HMBA|HET|HWIM|FME)$/i;
+
+const deriveClassCodeFromMetadata = (metadata: Record<string, unknown>): string | null => {
+  const candidates = [
+    metadata?.department,
+    metadata?.jobTitle,
+    metadata?.job_title,
+    metadata?.extensionAttribute1,
+    metadata?.extension_attribute_1,
+    metadata?.onPremisesExtensionAttributes?.extensionAttribute1,
+  ];
+
+  for (const val of candidates) {
+    if (typeof val === 'string' && CLASS_CODE_PATTERN.test(val.trim())) {
+      return val.trim().toUpperCase();
+    }
+  }
+
+  const allValues = JSON.stringify(metadata);
+  const match = allValues.match(/[1-5][A-Z]{1,2}(HIT|HMBA|HET|HWIM|FME)/i);
+  if (match) return match[0].toUpperCase();
+
+  return null;
+};
+
   signInWithAzure: () => Promise<void>;
 }
 
@@ -66,6 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .eq('id', authUser.id)
           .maybeSingle();
 
+            class_code: deriveClassCodeFromMetadata(authUser.user_metadata || {}),
         if (error) {
           console.error('Error fetching user:', error);
           return;
@@ -96,13 +123,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (data) {
           const avatarUrl = authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || null;
-          const updates: Record<string, string> = {};
+          const updates: Record<string, string | null> = {};
           if (avatarUrl && !data.profile_image_url) updates.profile_image_url = avatarUrl;
           if (data.display_name === 'Unbekannt' || !data.display_name) {
             updates.display_name =
               authUser.user_metadata?.full_name ||
               authUser.user_metadata?.name ||
               deriveNameFromEmail(authUser.email || '');
+          }
+          if (!data.class_code) {
+            const derived = deriveClassCodeFromMetadata(authUser.user_metadata || {});
+            if (derived) updates.class_code = derived;
           }
           if (Object.keys(updates).length > 0) {
             await supabase.from('users').update(updates).eq('id', data.id);
