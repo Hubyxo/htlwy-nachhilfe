@@ -13,7 +13,10 @@ if (!rootElement) {
 }
 
 msalInstance.initialize().then(() => {
-  msalInstance.handleRedirectPromise().then(() => {
+  msalInstance.handleRedirectPromise().then((response) => {
+    if (response) {
+      console.log('Login successful:', response);
+    }
     createRoot(rootElement).render(
       <StrictMode>
         <MsalProvider instance={msalInstance}>

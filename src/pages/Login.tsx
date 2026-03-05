@@ -16,7 +16,10 @@ const Login: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      await instance.loginRedirect(loginRequest);
+      await instance.loginRedirect({
+        ...loginRequest,
+        redirectStartPage: '/',
+      });
     } catch (e) {
       console.error('Login failed:', e);
     }
