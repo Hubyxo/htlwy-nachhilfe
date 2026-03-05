@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -19,28 +20,30 @@ import ScrollToTop from './components/ScrollToTop';
 function App() {
   return (
     <Router>
-      <ScrollToTop />
-      <div className="flex flex-col min-h-screen bg-gray-50">
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/tutor-werden" element={<TutorApplication />} />
-            <Route path="/tutor-werden/formular" element={<ApplicationForm type="tutor" />} />
-            <Route path="/nachhilfe-finden" element={<StudentApplication />} />
-            <Route path="/nachhilfe-finden/formular" element={<ApplicationForm type="student" />} />
-            <Route path="/nachhilfecoaches" element={<CoachesList />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/panel" element={<AdminPanel />} />
-            <Route path="/ueber-uns" element={<About />} />
-            <Route path="/kontakt" element={<Contact />} />
-            <Route path="/impressum" element={<Impressum />} />
-            <Route path="/datenschutz" element={<Datenschutz />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <AuthProvider>
+        <ScrollToTop />
+        <div className="flex flex-col min-h-screen bg-gray-50">
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/tutor-werden" element={<TutorApplication />} />
+              <Route path="/tutor-werden/formular" element={<ApplicationForm type="tutor" />} />
+              <Route path="/nachhilfe-finden" element={<StudentApplication />} />
+              <Route path="/nachhilfe-finden/formular" element={<ApplicationForm type="student" />} />
+              <Route path="/nachhilfecoaches" element={<CoachesList />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/panel" element={<AdminPanel />} />
+              <Route path="/ueber-uns" element={<About />} />
+              <Route path="/kontakt" element={<Contact />} />
+              <Route path="/impressum" element={<Impressum />} />
+              <Route path="/datenschutz" element={<Datenschutz />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
     </Router>
   );
 }
