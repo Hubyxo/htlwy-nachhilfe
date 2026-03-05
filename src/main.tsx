@@ -12,18 +12,10 @@ if (!rootElement) {
   throw new Error('Root element not found');
 }
 
-msalInstance.initialize().then(async () => {
-  try {
-    const response = await msalInstance.handleRedirectPromise();
-    if (response) {
-      console.log('Login successful:', response);
-      const accounts = msalInstance.getAllAccounts();
-      if (accounts.length > 0) {
-        msalInstance.setActiveAccount(accounts[0]);
-      }
-    }
-  } catch (error) {
-    console.error('Redirect error:', error);
+msalInstance.initialize().then(() => {
+  const accounts = msalInstance.getAllAccounts();
+  if (accounts.length > 0) {
+    msalInstance.setActiveAccount(accounts[0]);
   }
 
   createRoot(rootElement).render(

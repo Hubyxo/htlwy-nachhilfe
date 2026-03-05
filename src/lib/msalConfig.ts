@@ -21,6 +21,9 @@ export const msalConfig: Configuration = {
   },
   system: {
     allowRedirectInIframe: false,
+    windowHashTimeout: 60000,
+    iframeHashTimeout: 60000,
+    loadFrameTimeout: 60000,
     loggerOptions: {
       loggerCallback: (level, message, containsPii) => {
         if (containsPii) {
