@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { BookOpen, CheckCircle, Star, Clock, TrendingUp, Award, User } from 'lucide-react';
+import { BookOpen, CircleCheck as CheckCircle, Star, Clock, TrendingUp, Award, User } from 'lucide-react';
 
 interface Stats {
   activeCoachings: number;

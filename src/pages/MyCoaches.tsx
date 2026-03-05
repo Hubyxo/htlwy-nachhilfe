@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { GraduationCap, Mail, CheckCircle, Clock, AlertCircle, Star } from 'lucide-react';
+import { GraduationCap, Mail, CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, Star } from 'lucide-react';
 
 interface CoachProfile {
   id: string;

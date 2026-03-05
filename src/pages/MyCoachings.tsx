@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { CheckCircle, Clock, AlertCircle, Check, X, Users } from 'lucide-react';
+import { CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, Check, X, Users } from 'lucide-react';
 
 interface Booking {
   id: string;
