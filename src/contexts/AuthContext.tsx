@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       try {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from('users')
           .select('*')
           .eq('id', account.localAccountId)
@@ -60,6 +60,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.error('Error fetching user:', error);
           setIsLoading(false);
           return;
+        }
+
+        if (!data) {
+          const newUser = {
+            id: account.localAccountId,
+            email: account.username || account.name || '',
+            display_name: account.name || 'Unbekannt',
+            role: 'student',
+          };
+
+          const { data: createdUser, error: createError } = await supabase
+            .from('users')
+            .insert(newUser)
+            .select()
+            .maybeSingle();
+
+          if (createError) {
+            console.error('Error creating user:', createError);
+            setIsLoading(false);
+            return;
+          }
+
+          data = createdUser;
         }
 
         if (data) {
