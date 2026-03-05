@@ -74,7 +74,20 @@ const Navbar: React.FC = () => {
             ))}
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">{user?.display_name}</span>
+                <div className="flex items-center space-x-2">
+                  {user?.profile_image_url ? (
+                    <img
+                      src={user.profile_image_url}
+                      alt={user.display_name}
+                      className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
+                      {user?.display_name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="text-sm text-gray-700">{user?.display_name}</span>
+                </div>
                 <button
                   onClick={logout}
                   className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
@@ -130,8 +143,19 @@ const Navbar: React.FC = () => {
             ))}
             {isAuthenticated ? (
               <>
-                <div className="py-2 text-base text-gray-700 border-t pt-4">
-                  {user?.display_name}
+                <div className="flex items-center space-x-3 py-2 border-t pt-4">
+                  {user?.profile_image_url ? (
+                    <img
+                      src={user.profile_image_url}
+                      alt={user.display_name}
+                      className="w-9 h-9 rounded-full object-cover border border-gray-200"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
+                      {user?.display_name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="text-base text-gray-700">{user?.display_name}</span>
                 </div>
                 <button
                   onClick={() => {

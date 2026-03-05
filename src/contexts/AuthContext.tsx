@@ -56,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             id: authUser.id,
             email: authUser.email || '',
             display_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || 'Unbekannt',
+            profile_image_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || null,
             role: 'student' as const,
           };
 
@@ -74,6 +75,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         if (data) {
+          const avatarUrl = authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || null;
+          if (avatarUrl && !data.profile_image_url) {
+            await supabase
+              .from('users')
+              .update({ profile_image_url: avatarUrl })
+              .eq('id', data.id);
+            data = { ...data, profile_image_url: avatarUrl };
+          }
           setUser(data);
 
           if (data.role === 'coach') {
