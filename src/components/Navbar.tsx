@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
 
   const navLinks = isAuthenticated ? authenticatedNavLinks : publicNavLinks;
 
-  const isCoach = user?.role === 'coach' || !!coachProfile;
+  const isCoach = user?.role === 'coach';
 
   const profileMenuItems = [
     { label: 'Mein Profil', path: '/profil', icon: User, coachOnly: false, studentOnly: false },

@@ -151,7 +151,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             if (!coachError && coach) {
               setCoachProfile(coach);
+            } else {
+              setCoachProfile(null);
             }
+          } else {
+            setCoachProfile(null);
           }
         }
       } catch (err) {
