@@ -39,7 +39,10 @@ interface AuthContextType {
   parsedClass: ParsedUserClass | null;
   isLoading: boolean;
   logout: () => void;
-const CLASS_CODE_PATTERN = /^[1-5][A-Z]{1,2}(HIT|HMBA|HMBA|HET|HWIM|FME)$/i;
+  signInWithAzure: () => Promise<void>;
+}
+
+const CLASS_CODE_PATTERN = /^[1-5][A-Z]{1,2}(HIT|HMBA|HET|HWIM|FME)$/i;
 
 const deriveClassCodeFromMetadata = (metadata: Record<string, unknown>): string | null => {
   const candidates = [
@@ -48,7 +51,7 @@ const deriveClassCodeFromMetadata = (metadata: Record<string, unknown>): string 
     metadata?.job_title,
     metadata?.extensionAttribute1,
     metadata?.extension_attribute_1,
-    metadata?.onPremisesExtensionAttributes?.extensionAttribute1,
+    (metadata?.onPremisesExtensionAttributes as Record<string, unknown>)?.extensionAttribute1,
   ];
 
   for (const val of candidates) {
@@ -63,9 +66,6 @@ const deriveClassCodeFromMetadata = (metadata: Record<string, unknown>): string 
 
   return null;
 };
-
-  signInWithAzure: () => Promise<void>;
-}
 
 const deriveNameFromEmail = (email: string): string => {
   const local = email.split('@')[0];
@@ -92,7 +92,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .eq('id', authUser.id)
           .maybeSingle();
 
-            class_code: deriveClassCodeFromMetadata(authUser.user_metadata || {}),
         if (error) {
           console.error('Error fetching user:', error);
           return;
@@ -105,6 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             display_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || deriveNameFromEmail(authUser.email || ''),
             profile_image_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || null,
             role: 'student' as const,
+            class_code: deriveClassCodeFromMetadata(authUser.user_metadata || {}),
           };
 
           const { data: createdUser, error: createError } = await supabase
