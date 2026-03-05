@@ -1,35 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, User, BookOpen, GraduationCap, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const isAuthenticated = !!user;
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 20);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
   const publicNavLinks = [
     { name: 'Über uns', path: '/ueber-uns' },
@@ -46,10 +49,41 @@ const Navbar: React.FC = () => {
 
   const navLinks = isAuthenticated ? authenticatedNavLinks : publicNavLinks;
 
+  const profileMenuItems = [
+    { label: 'Mein Profil', path: '/profil', icon: User },
+    { label: 'Meine Coachings', path: '/meine-coachings', icon: BookOpen },
+    { label: 'Meine Coaches', path: '/nachhilfecoaches', icon: GraduationCap },
+  ];
+
+  const handleProfileNav = (path: string) => {
+    setIsProfileOpen(false);
+    navigate(path);
+  };
+
+  const handleLogout = () => {
+    setIsProfileOpen(false);
+    logout();
+  };
+
+  const Avatar = ({ size = 'sm' }: { size?: 'sm' | 'md' }) => {
+    const cls = size === 'sm'
+      ? 'w-8 h-8 text-sm'
+      : 'w-9 h-9 text-sm';
+    return user?.profile_image_url ? (
+      <img
+        src={user.profile_image_url}
+        alt={user.display_name}
+        className={`${cls} rounded-full object-cover border border-gray-200`}
+      />
+    ) : (
+      <div className={`${cls} rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold`}>
+        {user?.display_name?.charAt(0).toUpperCase()}
+      </div>
+    );
+  };
+
   return (
-    <header
-      className={`fixed w-full z-30 transition-all duration-300 bg-white shadow-md py-2`}
-    >
+    <header className="fixed w-full z-30 transition-all duration-300 bg-white shadow-md py-2">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
@@ -73,28 +107,47 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
             {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  {user?.profile_image_url ? (
-                    <img
-                      src={user.profile_image_url}
-                      alt={user.display_name}
-                      className="w-8 h-8 rounded-full object-cover border border-gray-200"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
-                      {user?.display_name?.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <span className="text-sm text-gray-700">{user?.display_name}</span>
-                </div>
+              <div className="relative" ref={profileRef}>
                 <button
-                  onClick={logout}
-                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center space-x-2 focus:outline-none group"
                 >
-                  <LogOut size={18} />
-                  <span className="text-sm font-medium">Abmelden</span>
+                  <div className="ring-2 ring-transparent group-hover:ring-blue-300 rounded-full transition-all duration-200">
+                    <Avatar size="sm" />
+                  </div>
+                  <span className="text-sm text-gray-700 group-hover:text-blue-600 transition-colors">
+                    {user?.display_name}
+                  </span>
                 </button>
+
+                {isProfileOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 animate-in">
+                    <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                    </div>
+                    <div className="py-1">
+                      {profileMenuItems.map((item) => (
+                        <button
+                          key={item.path}
+                          onClick={() => handleProfileNav(item.path)}
+                          className="w-full flex items-center space-x-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors text-left"
+                        >
+                          <item.icon size={16} className="flex-shrink-0" />
+                          <span>{item.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="border-t border-gray-100 py-1">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center space-x-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                      >
+                        <LogOut size={16} className="flex-shrink-0" />
+                        <span>Abmelden</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <Link
@@ -144,28 +197,29 @@ const Navbar: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <div className="flex items-center space-x-3 py-2 border-t pt-4">
-                  {user?.profile_image_url ? (
-                    <img
-                      src={user.profile_image_url}
-                      alt={user.display_name}
-                      className="w-9 h-9 rounded-full object-cover border border-gray-200"
-                    />
-                  ) : (
-                    <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
-                      {user?.display_name?.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <span className="text-base text-gray-700">{user?.display_name}</span>
+                  <Avatar size="md" />
+                  <div>
+                    <p className="text-base font-medium text-gray-800">{user?.display_name}</p>
+                    <p className="text-xs text-gray-500">{user?.email}</p>
+                  </div>
                 </div>
+                {profileMenuItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={closeMenu}
+                    className="flex items-center space-x-3 py-2 text-base text-gray-700 hover:text-blue-600 transition-colors"
+                  >
+                    <item.icon size={18} />
+                    <span>{item.label}</span>
+                  </Link>
+                ))}
                 <button
-                  onClick={() => {
-                    logout();
-                    closeMenu();
-                  }}
-                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors py-2"
+                  onClick={() => { logout(); closeMenu(); }}
+                  className="flex items-center space-x-3 py-2 text-base text-red-600 hover:text-red-700 transition-colors border-t pt-3"
                 >
                   <LogOut size={18} />
-                  <span className="text-base font-medium">Abmelden</span>
+                  <span>Abmelden</span>
                 </button>
               </>
             ) : (
