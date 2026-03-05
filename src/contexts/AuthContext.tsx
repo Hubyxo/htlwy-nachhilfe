@@ -33,12 +33,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useIsAuthenticated();
-  const { accounts } = useMsal();
+  const { accounts, instance } = useMsal();
   const account = useAccount(accounts[0] || null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [coachProfile, setCoachProfile] = useState<CoachProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { instance } = useMsal();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -67,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             id: account.localAccountId,
             email: account.username || account.name || '',
             display_name: account.name || 'Unbekannt',
-            role: 'student',
+            role: 'student' as const,
           };
 
           const { data: createdUser, error: createError } = await supabase
