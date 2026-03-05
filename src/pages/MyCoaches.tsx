@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { GraduationCap, Mail, CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, Star } from 'lucide-react';
+import { GraduationCap, Mail, CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, Star, MessageCircle } from 'lucide-react';
 
 interface CoachProfile {
   id: string;
@@ -78,6 +78,7 @@ const MyCoaches: React.FC = () => {
           .from('bookings')
           .select('id, coach_id, status, created_at')
           .eq('student_id', user.id)
+          .eq('status', 'confirmed')
           .order('created_at', { ascending: false });
 
         if (error || !bookings) return;
@@ -135,7 +136,7 @@ const MyCoaches: React.FC = () => {
           <GraduationCap size={28} className="text-blue-600" />
           <h1 className="text-3xl font-bold text-gray-900">Meine Coaches</h1>
         </div>
-        <p className="text-gray-500 mb-8">Coaches, die du gebucht hast</p>
+        <p className="text-gray-500 mb-8">Coaches, die deine Buchungsanfrage angenommen haben</p>
 
         {loading ? (
           <div className="space-y-4">
@@ -238,12 +239,23 @@ const MyCoaches: React.FC = () => {
                         {cfg.icon}
                         {cfg.label}
                       </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                      <MessageCircle size={15} className="text-blue-500" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm text-gray-600">
+                        Schreib <span className="font-medium">{entry.coachUser.display_name}</span> eine E-Mail, um die Nachhilfe zu besprechen:
+                      </p>
                       <a
                         href={`mailto:${entry.coachUser.email}`}
-                        className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                        className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline mt-0.5 transition-colors"
                       >
                         <Mail size={13} />
-                        Kontakt
+                        {entry.coachUser.email}
                       </a>
                     </div>
                   </div>

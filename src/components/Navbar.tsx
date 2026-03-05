@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, BookOpen, GraduationCap, LogOut } from 'lucide-react';
+import { Menu, X, User, BookOpen, GraduationCap, LogOut, ClipboardList } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import NotificationBell from './NotificationBell';
 
@@ -51,10 +51,10 @@ const Navbar: React.FC = () => {
   const navLinks = isAuthenticated ? authenticatedNavLinks : publicNavLinks;
 
   const profileMenuItems = [
-    { label: 'Mein Profil', path: '/profil', icon: User },
-    { label: 'Meine Coachings', path: '/meine-coachings', icon: BookOpen },
-    { label: 'Meine Coaches', path: '/meine-coaches', icon: GraduationCap },
-  ];
+    { label: 'Mein Profil', path: '/profil', icon: User, coachOnly: false },
+    { label: 'Buchungsanfragen', path: '/meine-coachings', icon: ClipboardList, coachOnly: true },
+    { label: 'Meine Coaches', path: '/meine-coaches', icon: GraduationCap, coachOnly: false },
+  ].filter((item) => !item.coachOnly || user?.role === 'coach');
 
   const handleProfileNav = (path: string) => {
     setIsProfileOpen(false);
