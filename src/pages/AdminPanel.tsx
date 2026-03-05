@@ -55,16 +55,7 @@ const AdminPanel: React.FC = () => {
       if (error) throw error;
 
       if (coach?.email) {
-        const { data: userData } = await supabase
-          .from('users')
-          .select('id')
-          .eq('email', coach.email)
-          .maybeSingle();
-
-        if (userData?.id) {
-          await supabase.from('coach_profiles').delete().eq('user_id', userData.id);
-          await supabase.from('users').update({ role: 'student' }).eq('id', userData.id);
-        }
+        await supabase.rpc('admin_demote_coach', { coach_email: coach.email });
       }
 
       setCoaches(coaches.filter(c => c.id !== id));
