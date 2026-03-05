@@ -4,11 +4,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
 const StudentForm: React.FC = () => {
-  const { user } = useAuth();
+  const { user, parsedClass } = useAuth();
 
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    classCode: '',
     subjects: [] as string[],
     schoolYear: '',
     availability: '',
@@ -32,6 +33,8 @@ const StudentForm: React.FC = () => {
           ...prev,
           fullName: user.display_name || '',
           email: user.email || '',
+          classCode: parsedClass?.classCode || '',
+          schoolYear: parsedClass?.schoolYear || '',
         }));
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -41,7 +44,7 @@ const StudentForm: React.FC = () => {
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, parsedClass]);
 
   const subjects = [
     'Mathematik',
@@ -90,6 +93,7 @@ const StudentForm: React.FC = () => {
         {
           full_name: formData.fullName,
           email: formData.email,
+          class: formData.classCode,
           subjects: formData.subjects,
           school_year: formData.schoolYear,
           availability: formData.availability,
@@ -103,6 +107,7 @@ const StudentForm: React.FC = () => {
       setFormData({
         fullName: '',
         email: '',
+        classCode: '',
         subjects: [],
         schoolYear: '',
         availability: '',
@@ -178,6 +183,50 @@ const StudentForm: React.FC = () => {
         <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
       </div>
 
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Klasse
+          </label>
+          <input
+            type="text"
+            value={formData.classCode}
+            readOnly={!!parsedClass}
+            onChange={(e) => !parsedClass && setFormData(prev => ({ ...prev, classCode: e.target.value }))}
+            placeholder="z.B. 3AHET"
+            className={`w-full px-4 py-2 border border-gray-300 rounded-md ${parsedClass ? 'bg-gray-50 text-gray-700 cursor-not-allowed' : 'focus:ring-2 focus:ring-blue-500 focus:border-transparent'}`}
+          />
+          {parsedClass && <p className="text-xs text-gray-500 mt-1">Aus deiner HTL-E-Mail-Adresse ermittelt</p>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Schulstufe
+          </label>
+          {parsedClass ? (
+            <>
+              <input
+                type="text"
+                value={formData.schoolYear}
+                readOnly
+                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+              />
+              <p className="text-xs text-gray-500 mt-1">Aus deiner HTL-E-Mail-Adresse ermittelt</p>
+            </>
+          ) : (
+            <select
+              value={formData.schoolYear}
+              onChange={(e) => setFormData(prev => ({ ...prev, schoolYear: e.target.value }))}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Bitte wählen</option>
+              {schoolYears.map((year) => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          )}
+        </div>
+      </div>
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">
           In welchen Fächern brauchst du Hilfe? * (wähle mindestens eines)
@@ -195,24 +244,6 @@ const StudentForm: React.FC = () => {
             </label>
           ))}
         </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Schulstufe
-        </label>
-        <select
-          value={formData.schoolYear}
-          onChange={(e) => setFormData(prev => ({ ...prev, schoolYear: e.target.value }))}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">Bitte wählen</option>
-          {schoolYears.map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
       </div>
 
       <div>

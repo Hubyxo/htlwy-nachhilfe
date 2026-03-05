@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { parseClassFromEmail } from '../lib/classParser';
 import type { User } from '@supabase/supabase-js';
+import type { Department } from '../lib/classParser';
+
+export type { Department };
 
 interface UserProfile {
   id: string;
@@ -22,9 +26,16 @@ interface CoachProfile {
   completed_bookings: number;
 }
 
+interface ParsedUserClass {
+  classCode: string;
+  schoolYear: string;
+  department: Department;
+}
+
 interface AuthContextType {
   user: UserProfile | null;
   coachProfile: CoachProfile | null;
+  parsedClass: ParsedUserClass | null;
   isLoading: boolean;
   logout: () => void;
   signInWithAzure: () => Promise<void>;
@@ -43,6 +54,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [coachProfile, setCoachProfile] = useState<CoachProfile | null>(null);
+  const [parsedClass, setParsedClass] = useState<ParsedUserClass | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -97,6 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             data = { ...data, ...updates };
           }
           setUser(data);
+          setParsedClass(parseClassFromEmail(data.email));
 
           if (data.role === 'coach') {
             const { data: coach, error: coachError } = await supabase
@@ -128,6 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setUser(null);
         setCoachProfile(null);
+        setParsedClass(null);
       }
       setIsLoading(false);
     });
@@ -154,10 +168,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
     setUser(null);
     setCoachProfile(null);
+    setParsedClass(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, coachProfile, isLoading, logout, signInWithAzure }}>
+    <AuthContext.Provider value={{ user, coachProfile, parsedClass, isLoading, logout, signInWithAzure }}>
       {children}
     </AuthContext.Provider>
   );

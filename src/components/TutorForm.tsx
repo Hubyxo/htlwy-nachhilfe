@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Check, CircleAlert as AlertCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import type { Department } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
-type Department = 'Informationstechnologie' | 'Maschinenbau' | 'Mechatronik' | 'Elektrotechnik' | 'Wirtschaftsingenieure' | '';
-
 const TutorForm: React.FC = () => {
-  const { user } = useAuth();
+  const { user, parsedClass } = useAuth();
 
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     department: '' as Department,
+    classCode: '',
     subjects: [] as string[],
     schoolYear: '',
     availability: '',
@@ -35,6 +35,9 @@ const TutorForm: React.FC = () => {
           ...prev,
           fullName: user.display_name || '',
           email: user.email || '',
+          department: (parsedClass?.department || '') as Department,
+          classCode: parsedClass?.classCode || '',
+          schoolYear: parsedClass?.schoolYear || '',
         }));
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -44,7 +47,7 @@ const TutorForm: React.FC = () => {
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, parsedClass]);
 
   const departments: { name: Department; color: string }[] = [
     { name: 'Informationstechnologie', color: '#ec7404' },
@@ -156,6 +159,7 @@ const TutorForm: React.FC = () => {
           full_name: formData.fullName,
           email: formData.email,
           department: formData.department,
+          class: formData.classCode,
           subjects: formData.subjects,
           school_year: formData.schoolYear,
           availability: formData.availability,
@@ -175,6 +179,7 @@ const TutorForm: React.FC = () => {
         fullName: '',
         email: '',
         department: '',
+        classCode: '',
         subjects: [],
         schoolYear: '',
         availability: '',
@@ -250,33 +255,57 @@ const TutorForm: React.FC = () => {
         <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Abteilung *
-        </label>
-        <select
-          value={formData.department}
-          onChange={(e) => {
-            const newDept = e.target.value as Department;
-            setFormData(prev => ({
-              ...prev,
-              department: newDept,
-              subjects: []
-            }));
-          }}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">Bitte wählen</option>
-          {departments.map((dept) => (
-            <option
-              key={dept.name}
-              value={dept.name}
-              style={{ backgroundColor: dept.color, color: dept.color === '#fec601' ? '#000' : '#fff' }}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Klasse
+          </label>
+          <input
+            type="text"
+            value={formData.classCode}
+            readOnly={!!parsedClass}
+            onChange={(e) => !parsedClass && setFormData(prev => ({ ...prev, classCode: e.target.value }))}
+            placeholder="z.B. 3AHET"
+            className={`w-full px-4 py-2 border border-gray-300 rounded-md ${parsedClass ? 'bg-gray-50 text-gray-700 cursor-not-allowed' : 'focus:ring-2 focus:ring-blue-500 focus:border-transparent'}`}
+          />
+          {parsedClass && <p className="text-xs text-gray-500 mt-1">Aus deiner HTL-E-Mail-Adresse ermittelt</p>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Abteilung *
+          </label>
+          {parsedClass ? (
+            <>
+              <input
+                type="text"
+                value={formData.department}
+                readOnly
+                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+              />
+              <p className="text-xs text-gray-500 mt-1">Aus deiner HTL-E-Mail-Adresse ermittelt</p>
+            </>
+          ) : (
+            <select
+              value={formData.department}
+              onChange={(e) => {
+                const newDept = e.target.value as Department;
+                setFormData(prev => ({
+                  ...prev,
+                  department: newDept,
+                  subjects: []
+                }));
+              }}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              {dept.name}
-            </option>
-          ))}
-        </select>
+              <option value="">Bitte wählen</option>
+              {departments.map((dept) => (
+                <option key={dept.name} value={dept.name}>
+                  {dept.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
 
       {formData.department && (
@@ -325,18 +354,30 @@ const TutorForm: React.FC = () => {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Schulstufe
         </label>
-        <select
-          value={formData.schoolYear}
-          onChange={(e) => setFormData(prev => ({ ...prev, schoolYear: e.target.value }))}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">Bitte wählen</option>
-          {schoolYears.map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
+        {parsedClass ? (
+          <>
+            <input
+              type="text"
+              value={formData.schoolYear}
+              readOnly
+              className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+            />
+            <p className="text-xs text-gray-500 mt-1">Aus deiner HTL-E-Mail-Adresse ermittelt</p>
+          </>
+        ) : (
+          <select
+            value={formData.schoolYear}
+            onChange={(e) => setFormData(prev => ({ ...prev, schoolYear: e.target.value }))}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="">Bitte wählen</option>
+            {schoolYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       <div>
