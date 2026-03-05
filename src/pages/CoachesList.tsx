@@ -17,7 +17,7 @@ interface Tutor {
 
 interface BookingState {
   coachId: string;
-  status: 'loading' | 'success' | 'error' | 'no_account';
+  status: 'loading' | 'success' | 'error' | 'no_account' | 'self';
 }
 
 const CoachesList: React.FC = () => {
@@ -80,6 +80,12 @@ const CoachesList: React.FC = () => {
     setBookingState({ coachId: tutor.id, status: 'loading' });
 
     try {
+      if (tutor.email === user.email) {
+        setBookingState({ coachId: tutor.id, status: 'self' });
+        setTimeout(() => setBookingState(null), 4000);
+        return;
+      }
+
       const { data: coachUser } = await supabase
         .from('users')
         .select('id')
@@ -161,6 +167,14 @@ const CoachesList: React.FC = () => {
         </>
       );
     }
+    if (bookingState.status === 'self') {
+      return (
+        <>
+          <AlertCircle className="h-4 w-4" />
+          Nicht buchbar
+        </>
+      );
+    }
     return (
       <>
         <AlertCircle className="h-4 w-4" />
@@ -176,6 +190,7 @@ const CoachesList: React.FC = () => {
     }
     if (bookingState.status === 'loading') return `${base} bg-blue-400 text-white cursor-not-allowed`;
     if (bookingState.status === 'success') return `${base} bg-green-600 text-white cursor-default`;
+    if (bookingState.status === 'self') return `${base} bg-gray-400 text-white cursor-default`;
     return `${base} bg-red-500 text-white cursor-default`;
   };
 
