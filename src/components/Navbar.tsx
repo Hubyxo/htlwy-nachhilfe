@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
   const profileMenuItems = [
     { label: 'Mein Profil', path: '/profil', icon: User },
     { label: 'Meine Coachings', path: '/meine-coachings', icon: BookOpen },
-    { label: 'Meine Coaches', path: '/nachhilfecoaches', icon: GraduationCap },
+    { label: 'Meine Coaches', path: '/meine-coaches', icon: GraduationCap },
   ];
 
   const handleProfileNav = (path: string) => {

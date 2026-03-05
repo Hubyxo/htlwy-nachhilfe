@@ -16,6 +16,9 @@ import Contact from './pages/Contact';
 import Impressum from './pages/Impressum';
 import Datenschutz from './pages/Datenschutz';
 import ScrollToTop from './components/ScrollToTop';
+import Profile from './pages/Profile';
+import MyCoachings from './pages/MyCoachings';
+import MyCoaches from './pages/MyCoaches';
 
 function App() {
   return (
@@ -39,6 +42,9 @@ function App() {
               <Route path="/kontakt" element={<Contact />} />
               <Route path="/impressum" element={<Impressum />} />
               <Route path="/datenschutz" element={<Datenschutz />} />
+              <Route path="/profil" element={<Profile />} />
+              <Route path="/meine-coachings" element={<MyCoachings />} />
+              <Route path="/meine-coaches" element={<MyCoaches />} />
             </Routes>
           </main>
           <Footer />

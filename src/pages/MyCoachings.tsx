@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { CircleCheck as CheckCircle, Clock, CircleAlert as AlertCircle, Check, X } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, Check, X, Users } from 'lucide-react';
 
 interface Booking {
   id: string;
@@ -14,18 +14,47 @@ interface Student {
   id: string;
   email: string;
   display_name: string;
+  profile_image_url?: string;
 }
+
+const statusConfig: Record<string, { label: string; bg: string; text: string; icon: React.ReactNode }> = {
+  pending: {
+    label: 'Ausstehend',
+    bg: 'bg-yellow-50',
+    text: 'text-yellow-700',
+    icon: <Clock size={15} className="text-yellow-600" />,
+  },
+  confirmed: {
+    label: 'Bestätigt',
+    bg: 'bg-green-50',
+    text: 'text-green-700',
+    icon: <CheckCircle size={15} className="text-green-600" />,
+  },
+  completed: {
+    label: 'Abgeschlossen',
+    bg: 'bg-blue-50',
+    text: 'text-blue-700',
+    icon: <CheckCircle size={15} className="text-blue-600" />,
+  },
+  cancelled: {
+    label: 'Storniert',
+    bg: 'bg-gray-100',
+    text: 'text-gray-500',
+    icon: <AlertCircle size={15} className="text-gray-400" />,
+  },
+};
 
 const MyCoachings: React.FC = () => {
   const { user, coachProfile } = useAuth();
   const [bookings, setBookings] = useState<(Booking & { student: Student })[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>('all');
 
   useEffect(() => {
-    const fetchCoachingBookings = async () => {
-      if (!user || !coachProfile) return;
+    if (!user || !coachProfile) return;
 
+    const fetchCoachingBookings = async () => {
       try {
         const { data, error } = await supabase
           .from('bookings')
@@ -38,11 +67,10 @@ const MyCoachings: React.FC = () => {
             data.map(async (booking) => {
               const { data: student } = await supabase
                 .from('users')
-                .select('id, email, display_name')
+                .select('id, email, display_name, profile_image_url')
                 .eq('id', booking.student_id)
                 .maybeSingle();
-
-              return { ...booking, student: student || {} };
+              return { ...booking, student: student || { id: '', email: '', display_name: 'Unbekannt' } };
             })
           );
           setBookings(bookingsWithStudents);
@@ -57,7 +85,7 @@ const MyCoachings: React.FC = () => {
     fetchCoachingBookings();
   }, [user, coachProfile]);
 
-  const handleConfirmBooking = async (bookingId: string) => {
+  const handleAction = async (bookingId: string, action: 'confirm' | 'reject') => {
     setActionLoading(bookingId);
     try {
       const response = await fetch(
@@ -66,164 +94,171 @@ const MyCoachings: React.FC = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
           },
-          body: JSON.stringify({
-            bookingId,
-            action: 'confirm',
-          }),
+          body: JSON.stringify({ bookingId, action }),
         }
       );
-
-      if (!response.ok) throw new Error('Failed to confirm booking');
-
-      setBookings(
-        bookings.map(b =>
-          b.id === bookingId ? { ...b, status: 'confirmed' } : b
-        )
-      );
+      if (!response.ok) throw new Error('Failed');
+      const newStatus = action === 'confirm' ? 'confirmed' : 'cancelled';
+      setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, status: newStatus } : b)));
     } catch (err) {
-      console.error('Error confirming booking:', err);
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
-  const handleRejectBooking = async (bookingId: string) => {
-    setActionLoading(bookingId);
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/confirm-booking`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            bookingId,
-            action: 'reject',
-          }),
-        }
-      );
-
-      if (!response.ok) throw new Error('Failed to reject booking');
-
-      setBookings(
-        bookings.map(b =>
-          b.id === bookingId ? { ...b, status: 'cancelled' } : b
-        )
-      );
-    } catch (err) {
-      console.error('Error rejecting booking:', err);
+      console.error('Error updating booking:', err);
     } finally {
       setActionLoading(null);
     }
   };
 
   if (!user) {
-    return <div className="container mx-auto px-4 py-16">Bitte melden Sie sich an.</div>;
-  }
-
-  if (user.role !== 'coach') {
     return (
-      <div className="container mx-auto px-4 py-16">
-        Diese Seite ist nur für Coaches verfügbar.
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 pt-24 pb-8 flex items-center justify-center">
+        <p className="text-gray-600">Bitte melde dich an.</p>
       </div>
     );
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return <CheckCircle className="text-green-600" size={20} />;
-      case 'pending':
-        return <Clock className="text-yellow-600" size={20} />;
-      case 'completed':
-        return <CheckCircle className="text-blue-600" size={20} />;
-      default:
-        return <AlertCircle className="text-gray-600" size={20} />;
-    }
-  };
+  if (user.role !== 'coach') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 pt-24 pb-8 flex items-center justify-center">
+        <p className="text-gray-600">Diese Seite ist nur für Coaches verfügbar.</p>
+      </div>
+    );
+  }
 
-  const getStatusLabel = (status: string) => {
-    const labels: { [key: string]: string } = {
-      pending: 'Ausstehend',
-      confirmed: 'Bestätigt',
-      completed: 'Abgeschlossen',
-      cancelled: 'Storniert',
-    };
-    return labels[status] || status;
-  };
+  const filters = [
+    { key: 'all', label: 'Alle' },
+    { key: 'pending', label: 'Ausstehend' },
+    { key: 'confirmed', label: 'Bestätigt' },
+    { key: 'completed', label: 'Abgeschlossen' },
+    { key: 'cancelled', label: 'Storniert' },
+  ];
+
+  const displayed = filter === 'all' ? bookings : bookings.filter((b) => b.status === filter);
+
+  const counts = bookings.reduce<Record<string, number>>((acc, b) => {
+    acc[b.status] = (acc[b.status] || 0) + 1;
+    return acc;
+  }, {});
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 pt-24 pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 pt-24 pb-12">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Meine Schüler</h1>
+        <div className="flex items-center gap-3 mb-2">
+          <Users size={28} className="text-blue-600" />
+          <h1 className="text-3xl font-bold text-gray-900">Meine Schüler</h1>
+        </div>
+        <p className="text-gray-500 mb-8">Übersicht aller Schüler, die dein Coaching gebucht haben</p>
+
+        <div className="flex flex-wrap gap-2 mb-6">
+          {filters.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                filter === f.key
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300'
+              }`}
+            >
+              {f.label}
+              {f.key !== 'all' && counts[f.key] ? (
+                <span className={`ml-1.5 text-xs ${filter === f.key ? 'opacity-80' : 'text-gray-400'}`}>
+                  {counts[f.key]}
+                </span>
+              ) : null}
+              {f.key === 'all' && (
+                <span className={`ml-1.5 text-xs ${filter === f.key ? 'opacity-80' : 'text-gray-400'}`}>
+                  {bookings.length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin">
-              <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full"></div>
-            </div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-pulse">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gray-200" />
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-1/3 mb-2" />
+                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ) : bookings.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-            <AlertCircle className="mx-auto text-gray-400 mb-4" size={48} />
-            <p className="text-gray-600 text-lg">Noch keine Schüler gebucht</p>
+        ) : displayed.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+            <Users className="mx-auto text-gray-300 mb-4" size={48} />
+            <p className="text-gray-500 text-lg font-medium">Keine Schüler gefunden</p>
+            <p className="text-gray-400 text-sm mt-1">
+              {filter !== 'all' ? 'Versuche einen anderen Filter.' : 'Noch hat niemand dein Coaching gebucht.'}
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {bookings.map((booking) => (
-              <div
-                key={booking.id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {booking.student?.display_name || 'Unbekannter Schüler'}
-                    </h3>
-                    <p className="text-gray-600 text-sm mt-1">
-                      {booking.student?.email}
-                    </p>
-                    <p className="text-gray-500 text-xs mt-2">
-                      Gebucht: {new Date(booking.created_at).toLocaleDateString('de-DE')}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center space-x-4 ml-4">
-                    <div className="flex items-center space-x-2">
-                      {getStatusIcon(booking.status)}
-                      <span className="font-medium text-gray-700">
-                        {getStatusLabel(booking.status)}
-                      </span>
+            {displayed.map((booking) => {
+              const cfg = statusConfig[booking.status] || statusConfig.cancelled;
+              return (
+                <div
+                  key={booking.id}
+                  className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      {booking.student.profile_image_url ? (
+                        <img
+                          src={booking.student.profile_image_url}
+                          alt={booking.student.display_name}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-100"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white text-lg font-semibold border-2 border-blue-100">
+                          {booking.student.display_name?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="text-base font-semibold text-gray-900">
+                          {booking.student.display_name}
+                        </h3>
+                        <p className="text-sm text-gray-500">{booking.student.email}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          Gebucht am {new Date(booking.created_at).toLocaleDateString('de-DE')}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                {booking.status === 'pending' && (
-                  <div className="mt-4 flex gap-2">
-                    <button
-                      onClick={() => handleConfirmBooking(booking.id)}
-                      disabled={actionLoading === booking.id}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-75"
-                    >
-                      <Check size={16} />
-                      Bestätigen
-                    </button>
-                    <button
-                      onClick={() => handleRejectBooking(booking.id)}
-                      disabled={actionLoading === booking.id}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-75"
-                    >
-                      <X size={16} />
-                      Ablehnen
-                    </button>
+                    <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text}`}>
+                      {cfg.icon}
+                      {cfg.label}
+                    </span>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {booking.status === 'pending' && (
+                    <div className="mt-4 flex gap-2">
+                      <button
+                        onClick={() => handleAction(booking.id, 'confirm')}
+                        disabled={actionLoading === booking.id}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-60 text-sm font-medium"
+                      >
+                        <Check size={15} />
+                        Bestätigen
+                      </button>
+                      <button
+                        onClick={() => handleAction(booking.id, 'reject')}
+                        disabled={actionLoading === booking.id}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-60 text-sm font-medium"
+                      >
+                        <X size={15} />
+                        Ablehnen
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
