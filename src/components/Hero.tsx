@@ -22,7 +22,7 @@ const Hero: React.FC = () => {
             Nachhilfe von Schülern für Schüler
           </h1>
           <p className="text-lg md:text-xl text-blue-100 mb-8">
-            Entdecke das Nachhilfeprogramm der HTL Waidhofen/Ybbs. Werde Nachhilfecoach oder finde die Unterstützung, die du brauchst.
+            Die Nachhilfeplattform der HTL Waidhofen/Ybbs. Melde dich als Coach an, wähle deine Fächer – und Schüler können dich direkt buchen.
           </p>
           {isAuthenticated ? (
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
@@ -37,7 +37,7 @@ const Hero: React.FC = () => {
                 to="/nachhilfecoaches"
                 className="bg-blue-600 text-white hover:bg-blue-500 border border-blue-500 transition-colors px-6 py-3 rounded-md font-medium text-center"
               >
-                Verfügbare Coaches
+                Coaches entdecken
               </Link>
             </div>
           ) : (
@@ -45,7 +45,7 @@ const Hero: React.FC = () => {
               to="/login"
               className="inline-flex items-center justify-center bg-white text-blue-700 hover:bg-gray-100 transition-colors px-8 py-4 rounded-md font-medium"
             >
-              <span>Anmelden</span>
+              <span>Mit Microsoft anmelden</span>
               <ArrowRight size={20} className="ml-2" />
             </Link>
           )}

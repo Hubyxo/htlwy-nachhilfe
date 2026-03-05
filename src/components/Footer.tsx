@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
               <span className="text-lg font-bold">HTL Waidhofen/Ybbs</span>
             </div>
             <p className="text-gray-300 mb-4">
-              Unser Nachhilfeprogramm verbindet Schülerinnen und Schüler, um gemeinsam bessere Lernerfolge zu erzielen.
+              Die Nachhilfeplattform der HTL Waidhofen/Ybbs – Schüler buchen Coaches direkt, einfach und ohne Umwege.
             </p>
             <div className="flex space-x-4">
               <a href="https://www.facebook.com/htlwaidhofen" aria-label="Facebook" className="text-white hover:text-blue-300">
@@ -84,7 +84,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-blue-800 mt-8 pt-6 text-center text-sm">
           <p className="text-gray-400">&copy; {new Date().getFullYear()} HTL Waidhofen/Ybbs. Alle Rechte vorbehalten.</p>
           <p className="text-gray-400 mt-2">
-            Ein Projekt der Schülervertretung der HTL Waidhofen/Ybbs.<br />
+            Eine Initiative der Schülervertretung der HTL Waidhofen/Ybbs.<br />
             Entwickelt von <a href="mailto:elias.scheidl@htlwy.at" className="hover:text-blue-300 transition-colors">Elias Scheidl</a> und <a href="mailto:oliver.spring@htlwy.at" className="hover:text-blue-300 transition-colors">Oliver Spring</a>.
           </p>
         </div>

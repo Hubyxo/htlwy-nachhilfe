@@ -8,7 +8,7 @@ const Contact: React.FC = () => {
         <div className="max-w-5xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Kontakt</h1>
           <p className="text-lg text-gray-600 mb-12">
-            Hast du Fragen zum Nachhilfeprogramm? Kontaktiere uns gerne!
+            Hast du Fragen zur Plattform oder zum Nachhilfeprogramm? Melde dich gerne bei uns!
           </p>
           
           <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
@@ -34,7 +34,7 @@ const Contact: React.FC = () => {
                 <div>
                   <h3 className="font-medium text-gray-800 mb-1">E-Mail</h3>
                   <p className="text-gray-600">office@htlwy.at</p>
-                  <p className="text-gray-600">nachhilfe@htlwy.at</p>
+                  <p className="text-gray-600">nachhilfe@htlwy.at <span className="text-gray-400 text-sm">(Plattform)</span></p>
                 </div>
               </div>
               

@@ -5,27 +5,27 @@ const InfoSection: React.FC = () => {
   const benefits = [
     {
       icon: <BookOpen className="h-8 w-8 text-blue-600" />,
-      title: 'Fachliche Unterstützung',
+      title: 'Direkte Buchung',
       description:
-        'Erhalte Hilfe in verschiedenen Fächern von Schülern, die diese Inhalte selbst vor kurzem gemeistert haben.',
+        'Schüler suchen einen passenden Coach, sehen dessen Fächer und Verfügbarkeit – und schicken direkt eine Buchungsanfrage.',
     },
     {
       icon: <Users className="h-8 w-8 text-blue-600" />,
       title: 'Von Schülern für Schüler',
       description:
-        'Lerne in einer entspannten Atmosphäre mit jemandem, der deine Herausforderungen versteht.',
+        'Alle Coaches sind HTL-Schüler, die den Stoff selbst kennen und auf Augenhöhe erklären können.',
     },
     {
       icon: <Award className="h-8 w-8 text-blue-600" />,
-      title: 'Erfahrung sammeln',
+      title: 'Erfahrung & Anerkennung',
       description:
-        'Als Nachhilfecoach kannst du wichtige Soft Skills entwickeln und gleichzeitig anderen helfen.',
+        'Als Coach sammelst du wichtige Soft Skills und wertvolle Erfahrung für deinen Lebenslauf.',
     },
     {
       icon: <Clock className="h-8 w-8 text-blue-600" />,
       title: 'Flexible Zeiten',
       description:
-        'Vereinbare Nachhilfestunden, die in deinen Stundenplan passen.',
+        'Termine werden direkt zwischen Coach und Schüler per Mail ausgemacht – komplett flexibel.',
     },
   ];
 
@@ -34,11 +34,10 @@ const InfoSection: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Warum unser Nachhilfeprogramm?
+            Warum unsere Plattform?
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Unser Programm bietet zahlreiche Vorteile für Nachhilfecoaches und Schüler,
-            die Unterstützung suchen.
+            Einfach, direkt, auf Augenhöhe – Nachhilfe innerhalb der HTL Waidhofen/Ybbs ohne Umwege.
           </p>
         </div>
 
@@ -71,9 +70,9 @@ const InfoSection: React.FC = () => {
                     1
                   </div>
                   <div>
-                    <p className="font-medium text-gray-800">Anmeldung</p>
+                    <p className="font-medium text-gray-800">Mit Microsoft anmelden</p>
                     <p className="text-gray-600">
-                      Fülle das Formular als Nachhilfecoach oder als Schüler aus.
+                      Login mit deinem HTL-Account – kein extra Passwort nötig.
                     </p>
                   </div>
                 </li>
@@ -82,9 +81,9 @@ const InfoSection: React.FC = () => {
                     2
                   </div>
                   <div>
-                    <p className="font-medium text-gray-800">Vermittlung</p>
+                    <p className="font-medium text-gray-800">Coach finden oder werden</p>
                     <p className="text-gray-600">
-                      Wir bringen passende Nachhilfecoaches und Schüler zusammen.
+                      Stöbere durch verfügbare Coaches oder erstelle dein eigenes Coach-Profil.
                     </p>
                   </div>
                 </li>
@@ -93,9 +92,9 @@ const InfoSection: React.FC = () => {
                     3
                   </div>
                   <div>
-                    <p className="font-medium text-gray-800">Nachhilfe</p>
+                    <p className="font-medium text-gray-800">Buchung & Termin</p>
                     <p className="text-gray-600">
-                      Vereinbart Termine und startet mit dem Lernen.
+                      Schicke eine Buchungsanfrage – der Coach bestätigt, und ihr macht per Mail einen Termin aus.
                     </p>
                   </div>
                 </li>

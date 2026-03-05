@@ -6,9 +6,9 @@ const About: React.FC = () => {
     <div className="pt-20 pb-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Über unser Nachhilfeprogramm</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Über unsere Plattform</h1>
           <p className="text-lg text-gray-600 mb-8">
-            Erfahre mehr über die Initiative der HTL Waidhofen/Ybbs, Schülerinnen und Schüler durch ein Peer-to-Peer Nachhilfeprogramm zu unterstützen.
+            Die Nachhilfeplattform der HTL Waidhofen/Ybbs verbindet Schüler direkt mit Nachhilfecoaches – ohne Zwischenschritt, ohne Warteliste.
           </p>
           
           <div className="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
@@ -19,10 +19,10 @@ const About: React.FC = () => {
               </div>
               <div>
                 <p className="text-gray-700">
-                  Unser Nachhilfeprogramm wurde ins Leben gerufen, um Schülerinnen und Schülern eine zusätzliche Lernunterstützung anzubieten. Wir glauben an die Kraft des Peer-to-Peer Lernens - wenn Schüler von Schülern lernen, entsteht eine besondere Dynamik.
+                  Unsere Plattform entstand aus der Überzeugung, dass Peer-to-Peer Lernen besonders wirksam ist. Wer den Stoff selbst erst kürzlich gemeistert hat, erklärt ihn oft verständlicher als jemand, der ihn schon lange kennt.
                 </p>
                 <p className="text-gray-700 mt-4">
-                  Unser Ziel ist es, eine unterstützende Lerngemeinschaft zu schaffen, in der sowohl die Nachhilfecoaches als auch die Lernenden profitieren. Die Nachhilfecoaches festigen ihr Wissen und entwickeln wichtige soziale Kompetenzen, während die Lernenden von einer individuellen Betreuung profitieren.
+                  Coaches und Schüler finden sich hier eigenständig – über ein einfaches Buchungssystem mit Microsoft-Login. Der Coach entscheidet selbst, welche Anfragen er annimmt, und macht den Termin direkt per Mail mit dem Schüler aus.
                 </p>
               </div>
             </div>
@@ -31,21 +31,21 @@ const About: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-800 mb-3">Unsere Werte</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-800 mb-2">Gemeinsames Lernen</h4>
+                  <h4 className="font-medium text-gray-800 mb-2">Eigenverantwortung</h4>
                   <p className="text-sm text-gray-600">
-                    Wir fördern eine Kultur des gegenseitigen Helfens und der Zusammenarbeit.
+                    Coaches verwalten ihr Profil selbst, Schüler buchen direkt – ohne Bürokratie.
                   </p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-800 mb-2">Respekt</h4>
+                  <h4 className="font-medium text-gray-800 mb-2">Augenhöhe</h4>
                   <p className="text-sm text-gray-600">
-                    Wir begegnen einander mit Respekt und schätzen unterschiedliche Lernstile.
+                    Wir begegnen einander als Mitschüler – offen, respektvoll und ohne Leistungsdruck.
                   </p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-800 mb-2">Engagement</h4>
+                  <h4 className="font-medium text-gray-800 mb-2">Gegenseitiger Nutzen</h4>
                   <p className="text-sm text-gray-600">
-                    Wir setzen uns mit vollem Einsatz für den Lernerfolg aller Beteiligten ein.
+                    Der Coach festigt sein Wissen, der Schüler schließt Lücken – beide profitieren.
                   </p>
                 </div>
               </div>
@@ -59,32 +59,32 @@ const About: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-2">Für Schüler</h3>
               <p className="text-gray-600 mb-4">
-                Als teilnehmender Schüler erhältst du:
+                Als Schüler auf der Plattform kannst du:
               </p>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Individuelle Unterstützung in schwierigen Fächern</span>
+                  <span>Coaches nach Fach oder Abteilung filtern</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Erklärungen auf Augenhöhe</span>
+                  <span>Direkt eine Buchungsanfrage stellen</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Flexibilität bei Terminvereinbarungen</span>
+                  <span>Den Status deiner Anfragen jederzeit einsehen</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Besseres Verständnis des Unterrichtsstoffs</span>
+                  <span>Termine flexibel direkt mit dem Coach absprechen</span>
                 </li>
               </ul>
             </div>
@@ -95,32 +95,32 @@ const About: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-2">Für Nachhilfecoaches</h3>
               <p className="text-gray-600 mb-4">
-                Als Nachhilfecoach profitierst du von:
+                Als Coach auf der Plattform kannst du:
               </p>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Vertiefung deines eigenen Wissens</span>
+                  <span>Dein Profil mit Fächern und Verfügbarkeit anlegen</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Entwicklung von Kommunikationsfähigkeiten</span>
+                  <span>Buchungsanfragen annehmen oder ablehnen</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Wertvolle Erfahrung für deinen Lebenslauf</span>
+                  <span>Deine aktiven Coachings im Überblick behalten</span>
                 </li>
                 <li className="flex items-start">
                   <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Kleines Honorar für deine Zeit und dein Engagement</span>
+                  <span>Mindestens 10€ pro Stunde verdienen</span>
                 </li>
               </ul>
             </div>
@@ -131,37 +131,37 @@ const About: React.FC = () => {
             
             <div className="space-y-6">
               <div>
-                <h3 className="font-medium text-gray-800 mb-2">Wer kann Nachhilfecoach werden?</h3>
+                <h3 className="font-medium text-gray-800 mb-2">Wer kann die Plattform nutzen?</h3>
                 <p className="text-gray-600">
-                  Jeder Schüler und jede Schülerin, der/die in bestimmten Fächern gute Leistungen erbringt und Interesse hat, anderen zu helfen, kann sich als Nachhilfecoach bewerben.
+                  Alle Schülerinnen und Schüler der HTL Waidhofen/Ybbs können sich mit ihrem Microsoft-Schulaccount anmelden – sowohl als Schüler als auch als Coach.
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="font-medium text-gray-800 mb-2">Wie viel kostet die Nachhilfe?</h3>
+                <h3 className="font-medium text-gray-800 mb-2">Wie werde ich Coach?</h3>
                 <p className="text-gray-600">
-                  Unser Programm ist so konzipiert, dass es für alle zugänglich ist. Die Nachhilfecoaches erhalten eine kleine Aufwandsentschädigung, aber die Kosten werden bewusst niedrig gehalten.
+                  Nach der Anmeldung kannst du unter "Nachhilfecoach werden" ein Profil anlegen. Das Profil wird vom Admin freigeschalten, danach bist du in der Coach-Liste sichtbar.
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="font-medium text-gray-800 mb-2">Wo finden die Nachhilfestunden statt?</h3>
+                <h3 className="font-medium text-gray-800 mb-2">Wie läuft eine Buchung ab?</h3>
                 <p className="text-gray-600">
-                  Die Nachhilfestunden können in den Räumlichkeiten der Schule während der festgelegten Zeiten stattfinden. Bei Bedarf können auch andere Arrangements getroffen werden.
+                  Du suchst dir einen Coach, schickst eine Buchungsanfrage mit dem gewünschten Fach, und der Coach bestätigt oder lehnt ab. Bei Bestätigung macht der Coach per Mail einen Termin mit dir aus.
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="font-medium text-gray-800 mb-2">Wie lange dauert eine Nachhilfestunde?</h3>
+                <h3 className="font-medium text-gray-800 mb-2">Was kostet die Nachhilfe?</h3>
                 <p className="text-gray-600">
-                  Eine typische Nachhilfestunde dauert 60 bis 90 Minuten, kann aber je nach Bedarf und Vereinbarung angepasst werden.
+                  Die Kosten werden direkt zwischen Coach und Schüler vereinbart. Als Richtwert gilt ein Honorar von mindestens 10€ pro Stunde für den Coach.
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="font-medium text-gray-800 mb-2">Gibt es eine Mindestanzahl an Stunden?</h3>
+                <h3 className="font-medium text-gray-800 mb-2">Wo finden die Stunden statt?</h3>
                 <p className="text-gray-600">
-                  Es gibt keine feste Mindestanzahl, aber regelmäßige Sitzungen sind empfehlenswert, um den bestmöglichen Lernerfolg zu erzielen.
+                  Das klären Coach und Schüler selbst per Mail – ob in der Schule oder anderswo. Die Plattform übernimmt nur die Vermittlung.
                 </p>
               </div>
             </div>
