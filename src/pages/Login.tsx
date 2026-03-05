@@ -2,34 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useNavigate } from 'react-router-dom';
 import { loginRequest } from '../lib/msalConfig';
+import { useAuth } from '../contexts/AuthContext';
 import { Heater as Hero, CircleAlert as AlertCircle } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { instance, accounts } = useMsal();
+  const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      if (accounts.length > 0) {
-        const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/';
-        sessionStorage.removeItem('redirectAfterLogin');
-        navigate(redirectPath);
-      }
-    };
-    checkAuth();
-  }, [accounts, navigate]);
+    if (!authLoading && user) {
+      const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/';
+      sessionStorage.removeItem('redirectAfterLogin');
+      navigate(redirectPath, { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   const handleLogin = async () => {
     setError(null);
     setIsLoading(true);
     try {
-      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+      sessionStorage.setItem('redirectAfterLogin', '/');
       await instance.loginRedirect({
         ...loginRequest,
         prompt: 'select_account',
-        redirectStartPage: window.location.href,
       });
     } catch (e: any) {
       console.error('Login failed:', e);
@@ -37,6 +35,20 @@ const Login: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  if (authLoading || (accounts.length > 0 && !user)) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center px-4">
+        <div className="text-center text-white">
+          <svg className="animate-spin h-12 w-12 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p className="text-lg">Anmeldung wird verarbeitet...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center px-4">
