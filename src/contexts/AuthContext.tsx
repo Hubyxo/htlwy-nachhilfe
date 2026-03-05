@@ -30,6 +30,14 @@ interface AuthContextType {
   signInWithAzure: () => Promise<void>;
 }
 
+const deriveNameFromEmail = (email: string): string => {
+  const local = email.split('@')[0];
+  return local
+    .split('.')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ');
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -55,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const newUser = {
             id: authUser.id,
             email: authUser.email || '',
-            display_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || 'Unbekannt',
+            display_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || deriveNameFromEmail(authUser.email || ''),
             profile_image_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || null,
             role: 'student' as const,
           };
@@ -76,12 +84,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (data) {
           const avatarUrl = authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || null;
-          if (avatarUrl && !data.profile_image_url) {
-            await supabase
-              .from('users')
-              .update({ profile_image_url: avatarUrl })
-              .eq('id', data.id);
-            data = { ...data, profile_image_url: avatarUrl };
+          const updates: Record<string, string> = {};
+          if (avatarUrl && !data.profile_image_url) updates.profile_image_url = avatarUrl;
+          if (data.display_name === 'Unbekannt' || !data.display_name) {
+            updates.display_name =
+              authUser.user_metadata?.full_name ||
+              authUser.user_metadata?.name ||
+              deriveNameFromEmail(authUser.email || '');
+          }
+          if (Object.keys(updates).length > 0) {
+            await supabase.from('users').update(updates).eq('id', data.id);
+            data = { ...data, ...updates };
           }
           setUser(data);
 
