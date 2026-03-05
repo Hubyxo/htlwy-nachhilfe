@@ -153,7 +153,6 @@ const TutorForm: React.FC = () => {
           full_name: formData.fullName,
           email: formData.email,
           department: formData.department,
-          class: formData.classCode,
           subjects: formData.subjects,
           school_year: formData.schoolYear,
           availability: formData.availability,
