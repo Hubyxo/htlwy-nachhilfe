@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [isAuthenticated, account?.localAccountId]);
 
   const logout = async () => {
-    await instance.logoutPopup();
+    await instance.logoutRedirect();
     setUser(null);
     setCoachProfile(null);
   };

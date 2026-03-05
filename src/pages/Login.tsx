@@ -6,10 +6,12 @@ import { Heater as Hero } from 'lucide-react';
 const Login: React.FC = () => {
   const { instance } = useMsal();
 
-  const handleLogin = () => {
-    instance.loginPopup(loginRequest).catch(e => {
+  const handleLogin = async () => {
+    try {
+      await instance.loginRedirect(loginRequest);
+    } catch (e) {
       console.error('Login failed:', e);
-    });
+    }
   };
 
   return (

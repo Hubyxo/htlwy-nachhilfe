@@ -7,13 +7,17 @@ import App from './App.tsx';
 import './index.css';
 
 msalInstance.initialize().then(() => {
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <MsalProvider instance={msalInstance}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </MsalProvider>
-    </StrictMode>
-  );
+  msalInstance.handleRedirectPromise().then(() => {
+    createRoot(document.getElementById('root')!).render(
+      <StrictMode>
+        <MsalProvider instance={msalInstance}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </MsalProvider>
+      </StrictMode>
+    );
+  }).catch((error) => {
+    console.error('Redirect error:', error);
+  });
 });
