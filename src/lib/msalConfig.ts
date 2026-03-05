@@ -39,9 +39,5 @@ export const msalConfig: Configuration = {
 export const msalInstance = new PublicClientApplication(msalConfig);
 
 export const loginRequest = {
-  scopes: ['User.Read', 'Mail.Read'],
-};
-
-export const graphRequest = {
-  scopes: ['User.Read', 'Mail.Read'],
+  scopes: ['User.Read', 'profile', 'openid'],
 };

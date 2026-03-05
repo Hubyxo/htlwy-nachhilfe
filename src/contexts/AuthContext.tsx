@@ -49,6 +49,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       try {
+        const response = await instance.acquireTokenSilent({
+          scopes: ['User.Read'],
+          account: account,
+        });
+
+        const graphResponse = await fetch('https://graph.microsoft.com/v1.0/me', {
+          headers: {
+            Authorization: `Bearer ${response.accessToken}`,
+          },
+        });
+
+        const graphData = await graphResponse.json();
+
         let { data, error } = await supabase
           .from('users')
           .select('*')
@@ -64,8 +77,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!data) {
           const newUser = {
             id: account.localAccountId,
-            email: account.username || account.name || '',
-            display_name: account.name || 'Unbekannt',
+            email: graphData.mail || graphData.userPrincipalName || account.username || '',
+            display_name: graphData.displayName || account.name || 'Unbekannt',
             role: 'student' as const,
           };
 
@@ -108,7 +121,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     fetchUserProfile();
-  }, [isAuthenticated, account?.localAccountId]);
+  }, [isAuthenticated, account?.localAccountId, instance]);
 
   const logout = async () => {
     await instance.logoutRedirect();

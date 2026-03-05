@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, AlertCircle } from 'lucide-react';
+import { useMsal, useAccount } from '@azure/msal-react';
 import { supabase } from '../lib/supabase';
 
 type Department = 'Informationstechnologie' | 'Maschinenbau' | 'Mechatronik' | 'Elektrotechnik' | 'Wirtschaftsingenieure' | '';
 
 const TutorForm: React.FC = () => {
+  const { instance, accounts } = useMsal();
+  const account = useAccount(accounts[0] || null);
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -18,6 +22,54 @@ const TutorForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!account) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await instance.acquireTokenSilent({
+          scopes: ['User.Read'],
+          account: account,
+        });
+
+        const graphResponse = await fetch('https://graph.microsoft.com/v1.0/me?$select=displayName,mail,userPrincipalName,department,jobTitle', {
+          headers: {
+            Authorization: `Bearer ${response.accessToken}`,
+          },
+        });
+
+        const userData = await graphResponse.json();
+
+        setFormData(prev => ({
+          ...prev,
+          fullName: userData.displayName || account.name || '',
+          email: userData.mail || userData.userPrincipalName || '',
+          department: mapDepartment(userData.department || userData.jobTitle || ''),
+        }));
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [account, instance]);
+
+  const mapDepartment = (dept: string): Department => {
+    const deptLower = dept.toLowerCase();
+    if (deptLower.includes('informationstechnologie') || deptLower.includes('it')) return 'Informationstechnologie';
+    if (deptLower.includes('maschinenbau')) return 'Maschinenbau';
+    if (deptLower.includes('mechatronik')) return 'Mechatronik';
+    if (deptLower.includes('elektrotechnik')) return 'Elektrotechnik';
+    if (deptLower.includes('wirtschaftsingenieur')) return 'Wirtschaftsingenieure';
+    return '';
+  };
 
   const departments: { name: Department; color: string }[] = [
     { name: 'Informationstechnologie', color: '#ec7404' },
@@ -124,10 +176,6 @@ const TutorForm: React.FC = () => {
         throw new Error('Bitte fülle alle erforderlichen Felder aus.');
       }
 
-      if (!formData.email.endsWith('@htlwy.at')) {
-        throw new Error('Bitte verwende eine @htlwy.at E-Mail-Adresse.');
-      }
-
       const { error } = await supabase.from('tutors').insert([
         {
           full_name: formData.fullName,
@@ -167,6 +215,14 @@ const TutorForm: React.FC = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {submitStatus === 'success' && (
@@ -198,10 +254,11 @@ const TutorForm: React.FC = () => {
         <input
           type="text"
           value={formData.fullName}
-          onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          readOnly
+          className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
           placeholder="Dein Name"
         />
+        <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
       </div>
 
       <div>
@@ -211,10 +268,11 @@ const TutorForm: React.FC = () => {
         <input
           type="email"
           value={formData.email}
-          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          readOnly
+          className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
           placeholder="vorname.nachname@htlwy.at"
         />
+        <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
       </div>
 
       <div>
