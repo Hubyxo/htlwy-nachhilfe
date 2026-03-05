@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Trash2, Edit2, LogOut, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, CreditCard as Edit2, LogOut, CircleAlert as AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import AdminCoachForm from '../components/AdminCoachForm';
 
