@@ -103,29 +103,8 @@ const handleDeleteProfile = async () => {
   if (!coachProfile || !user) return;
   setDeleteLoading(true);
   try {
-    // Offene Buchungsanfragen stornieren
-    await supabase
-      .from('bookings')
-      .update({ status: 'cancelled' })
-      .eq('coach_id', coachProfile.id)
-      .eq('status', 'pending');
-
-    // coach_profiles löschen
-    const { error } = await supabase
-      .from('coach_profiles')
-      .delete()
-      .eq('id', coachProfile.id)
-      .eq('user_id', user.id);
+    const { error } = await supabase.rpc('delete_own_coach_profile');
     if (error) throw error;
-
-    // tutors-Eintrag löschen (wird von CoachesList verwendet)
-    await supabase
-      .from('tutors')
-      .delete()
-      .eq('email', user.email);
-
-    // Rolle zurücksetzen
-    await supabase.from('users').update({ role: 'student' }).eq('id', user.id);
 
     setDeleteSuccess(true);
     setDeleteProfileModal(false);
