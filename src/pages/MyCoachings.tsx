@@ -7,6 +7,7 @@ interface Booking {
   id: string;
   student_id: string;
   status: string;
+  subject: string | null;
   created_at: string;
 }
 
@@ -193,14 +194,14 @@ const MyCoachings: React.FC = () => {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center gap-3 mb-2">
             <Users size={28} className="text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Meine Coachings</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Buchungsanfragen</h1>
             {pendingCount > 0 && (
               <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full">
                 {pendingCount} neu
               </span>
             )}
           </div>
-          <p className="text-gray-500 mb-8">Übersicht aller Schüler, die dich als Coach gebucht haben</p>
+          <p className="text-gray-500 mb-8">Verwalte eingehende Anfragen von Schülern</p>
 
           <div className="flex flex-wrap gap-2 mb-6">
             {filters.map((f) => (
@@ -276,6 +277,11 @@ const MyCoachings: React.FC = () => {
                           <h3 className="text-base font-semibold text-gray-900">
                             {booking.student.display_name}
                           </h3>
+                          {booking.subject && (
+                            <span className="inline-block mt-0.5 mb-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                              {booking.subject}
+                            </span>
+                          )}
                           <p className="text-sm text-gray-500">{booking.student.email}</p>
                           <p className="text-xs text-gray-400 mt-0.5">
                             Angefragt am {new Date(booking.created_at).toLocaleDateString('de-DE')}

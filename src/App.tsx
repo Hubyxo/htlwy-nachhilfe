@@ -18,6 +18,7 @@ import Datenschutz from './pages/Datenschutz';
 import ScrollToTop from './components/ScrollToTop';
 import Profile from './pages/Profile';
 import MyCoachings from './pages/MyCoachings';
+import MeineCoachings from './pages/MeineCoachings';
 import MyCoaches from './pages/MyCoaches';
 
 function App() {
@@ -43,7 +44,8 @@ function App() {
               <Route path="/impressum" element={<Impressum />} />
               <Route path="/datenschutz" element={<Datenschutz />} />
               <Route path="/profil" element={<Profile />} />
-              <Route path="/meine-coachings" element={<MyCoachings />} />
+              <Route path="/buchungsanfragen" element={<MyCoachings />} />
+              <Route path="/meine-coachings" element={<MeineCoachings />} />
               <Route path="/meine-coaches" element={<MyCoaches />} />
             </Routes>
           </main>

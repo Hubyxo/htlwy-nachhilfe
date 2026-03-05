@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, CalendarPlus, CircleCheck as CheckCircle, CircleAlert as AlertCircle } from 'lucide-react';
+import { ChevronDown, CalendarPlus, CircleCheck as CheckCircle, CircleAlert as AlertCircle, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import CoachDetail from '../components/CoachDetail';
@@ -20,6 +20,11 @@ interface BookingState {
   status: 'loading' | 'success' | 'error' | 'no_account' | 'self';
 }
 
+interface SubjectModalState {
+  tutor: Tutor;
+  selected: string;
+}
+
 const CoachesList: React.FC = () => {
   const { user } = useAuth();
   const [coaches, setCoaches] = useState<Tutor[]>([]);
@@ -27,6 +32,7 @@ const CoachesList: React.FC = () => {
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [selectedCoach, setSelectedCoach] = useState<Tutor | null>(null);
   const [bookingState, setBookingState] = useState<BookingState | null>(null);
+  const [subjectModal, setSubjectModal] = useState<SubjectModalState | null>(null);
 
   const departmentColors: Record<string, { bg: string; text: string }> = {
     'Informationstechnologie': { bg: '#ec7404', text: '#fff' },
@@ -74,8 +80,14 @@ const CoachesList: React.FC = () => {
     ? coaches.filter((coach) => coach.subjects.includes(selectedSubject))
     : coaches;
 
-  const handleBookCoach = async (tutor: Tutor) => {
-    if (!user) return;
+  const openBookingModal = (tutor: Tutor) => {
+    setSubjectModal({ tutor, selected: tutor.subjects[0] || '' });
+  };
+
+  const handleBookCoach = async () => {
+    if (!user || !subjectModal) return;
+    const { tutor, selected } = subjectModal;
+    setSubjectModal(null);
 
     setBookingState({ coachId: tutor.id, status: 'loading' });
 
@@ -114,6 +126,7 @@ const CoachesList: React.FC = () => {
         student_id: user.id,
         coach_id: coachProfile.id,
         status: 'pending',
+        subject: selected,
       });
 
       if (bookingError) throw bookingError;
@@ -121,7 +134,7 @@ const CoachesList: React.FC = () => {
       await supabase.from('notifications').insert({
         user_id: coachUser.id,
         type: 'booking_request',
-        message: `${user.display_name} hat eine Buchungsanfrage gestellt.`,
+        message: `${user.display_name} hat eine Buchungsanfrage für ${selected} gestellt.`,
         read: false,
       });
 
@@ -284,7 +297,7 @@ const CoachesList: React.FC = () => {
                       <div className="flex gap-2 pt-4 border-t border-gray-200">
                         {user ? (
                           <button
-                            onClick={() => handleBookCoach(coach)}
+                            onClick={() => openBookingModal(coach)}
                             disabled={
                               bookingState?.coachId === coach.id &&
                               bookingState.status === 'loading'
@@ -320,6 +333,56 @@ const CoachesList: React.FC = () => {
 
       {selectedCoach && (
         <CoachDetail coach={selectedCoach} onClose={() => setSelectedCoach(null)} />
+      )}
+
+      {subjectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-gray-900">Fach auswählen</h2>
+              <button
+                onClick={() => setSubjectModal(null)}
+                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <X size={18} className="text-gray-500" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mb-4">
+              Für welches Fach möchtest du <span className="font-medium text-gray-700">{subjectModal.tutor.full_name}</span> buchen?
+            </p>
+            <div className="flex flex-col gap-2 mb-6">
+              {subjectModal.tutor.subjects.map((subject) => (
+                <button
+                  key={subject}
+                  onClick={() => setSubjectModal({ ...subjectModal, selected: subject })}
+                  className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-colors ${
+                    subjectModal.selected === subject
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : 'border-gray-200 hover:border-blue-200 text-gray-700'
+                  }`}
+                >
+                  {subject}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSubjectModal(null)}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={handleBookCoach}
+                disabled={!subjectModal.selected}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                <CalendarPlus size={15} />
+                Anfrage senden
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
