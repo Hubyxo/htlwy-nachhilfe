@@ -154,7 +154,7 @@ const About: React.FC = () => {
               <div>
                 <h3 className="font-medium text-gray-800 mb-2">Was kostet die Nachhilfe?</h3>
                 <p className="text-gray-600">
-                  Die Kosten werden direkt zwischen Coach und Schüler vereinbart. Als Richtwert gilt ein Honorar von mindestens 10€ pro Stunde für den Coach.
+                  Die Kosten werden direkt zwischen Coach und Schüler vereinbart. Als Richtwert gilt ein Honorar von ca. 10€ pro Stunde für den Coach.
                 </p>
               </div>
 
