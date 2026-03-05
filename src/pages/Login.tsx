@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useNavigate } from 'react-router-dom';
 import { loginRequest } from '../lib/msalConfig';
-import { Heater as Hero, AlertCircle } from 'lucide-react';
+import { Heater as Hero, CircleAlert as AlertCircle } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { instance, accounts } = useMsal();
