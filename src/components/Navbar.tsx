@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, BookOpen, GraduationCap, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import NotificationBell from './NotificationBell';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -107,6 +108,8 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
             {isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                <NotificationBell />
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -148,6 +151,7 @@ const Navbar: React.FC = () => {
                     </div>
                   </div>
                 )}
+              </div>
               </div>
             ) : (
               <Link
