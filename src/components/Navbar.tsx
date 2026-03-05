@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, BookOpen, GraduationCap, LogOut, ClipboardList, Inbox } from 'lucide-react';
+import { Menu, X, User, BookOpen, GraduationCap, LogOut, ClipboardList, Inbox, CalendarClock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import NotificationBell from './NotificationBell';
 
@@ -53,11 +53,16 @@ const Navbar: React.FC = () => {
   const isCoach = user?.role === 'coach' || !!coachProfile;
 
   const profileMenuItems = [
-    { label: 'Mein Profil', path: '/profil', icon: User, coachOnly: false },
-    { label: 'Buchungsanfragen', path: '/buchungsanfragen', icon: Inbox, coachOnly: true },
-    { label: 'Meine Coachings', path: '/meine-coachings', icon: ClipboardList, coachOnly: true },
-    { label: 'Meine Coaches', path: '/meine-coaches', icon: GraduationCap, coachOnly: false },
-  ].filter((item) => !item.coachOnly || isCoach);
+    { label: 'Mein Profil', path: '/profil', icon: User, coachOnly: false, studentOnly: false },
+    { label: 'Buchungsanfragen', path: '/buchungsanfragen', icon: Inbox, coachOnly: true, studentOnly: false },
+    { label: 'Meine Coachings', path: '/meine-coachings', icon: ClipboardList, coachOnly: true, studentOnly: false },
+    { label: 'Buchungen', path: '/buchungen', icon: CalendarClock, coachOnly: false, studentOnly: true },
+    { label: 'Meine Coaches', path: '/meine-coaches', icon: GraduationCap, coachOnly: false, studentOnly: false },
+  ].filter((item) => {
+    if (item.coachOnly && !isCoach) return false;
+    if (item.studentOnly && isCoach) return false;
+    return true;
+  });
 
   const handleProfileNav = (path: string) => {
     setIsProfileOpen(false);

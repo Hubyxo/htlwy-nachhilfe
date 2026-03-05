@@ -127,16 +127,18 @@ const MyCoachings: React.FC = () => {
     setActionLoading(bookingId);
     setRejectModal(null);
 
+    const trimmedReason = rejectReason.trim();
+
     try {
       const { error } = await supabase
         .from('bookings')
-        .update({ status: 'cancelled' })
+        .update({ status: 'cancelled', rejection_reason: trimmedReason || null })
         .eq('id', bookingId);
 
       if (error) throw error;
 
-      const reasonText = rejectReason.trim()
-        ? ` Begründung: "${rejectReason.trim()}"`
+      const reasonText = trimmedReason
+        ? ` Begründung: "${trimmedReason}"`
         : '';
 
       await supabase.from('notifications').insert({

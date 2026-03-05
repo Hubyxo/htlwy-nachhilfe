@@ -20,6 +20,7 @@ import Profile from './pages/Profile';
 import MyCoachings from './pages/MyCoachings';
 import MeineCoachings from './pages/MeineCoachings';
 import MyCoaches from './pages/MyCoaches';
+import Buchungen from './pages/Buchungen';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
               <Route path="/buchungsanfragen" element={<MyCoachings />} />
               <Route path="/meine-coachings" element={<MeineCoachings />} />
               <Route path="/meine-coaches" element={<MyCoaches />} />
+              <Route path="/buchungen" element={<Buchungen />} />
             </Routes>
           </main>
           <Footer />
