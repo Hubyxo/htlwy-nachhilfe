@@ -167,6 +167,21 @@ const TutorForm: React.FC = () => {
         throw error;
       }
 
+      if (user) {
+        const { error: profileError } = await supabase.from('coach_profiles').upsert(
+          {
+            user_id: user.id,
+            department: formData.department,
+            class: formData.classCode,
+            subjects: formData.subjects,
+            availability: formData.availability,
+            additional_info: formData.additionalInfo,
+          },
+          { onConflict: 'user_id' }
+        );
+        if (profileError) throw profileError;
+      }
+
       setSubmitStatus('success');
       setFormData({
         fullName: '',
