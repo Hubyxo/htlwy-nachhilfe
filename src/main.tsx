@@ -6,9 +6,15 @@ import { AuthProvider } from './contexts/AuthContext';
 import App from './App.tsx';
 import './index.css';
 
+const rootElement = document.getElementById('root');
+
+if (!rootElement) {
+  throw new Error('Root element not found');
+}
+
 msalInstance.initialize().then(() => {
   msalInstance.handleRedirectPromise().then(() => {
-    createRoot(document.getElementById('root')!).render(
+    createRoot(rootElement).render(
       <StrictMode>
         <MsalProvider instance={msalInstance}>
           <AuthProvider>
@@ -19,5 +25,25 @@ msalInstance.initialize().then(() => {
     );
   }).catch((error) => {
     console.error('Redirect error:', error);
+    createRoot(rootElement).render(
+      <StrictMode>
+        <MsalProvider instance={msalInstance}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </MsalProvider>
+      </StrictMode>
+    );
   });
+}).catch((error) => {
+  console.error('MSAL initialization error:', error);
+  createRoot(rootElement).render(
+    <StrictMode>
+      <MsalProvider instance={msalInstance}>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </MsalProvider>
+    </StrictMode>
+  );
 });
