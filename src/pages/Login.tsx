@@ -20,25 +20,13 @@ const Login: React.FC = () => {
     setError(null);
     setIsLoading(true);
     try {
-      const response = await instance.loginPopup({
+      await instance.loginRedirect({
         ...loginRequest,
         prompt: 'select_account',
       });
-
-      if (response && response.account) {
-        instance.setActiveAccount(response.account);
-        navigate('/');
-      }
     } catch (e: any) {
       console.error('Login failed:', e);
-      if (e.errorCode === 'user_cancelled') {
-        setError('Anmeldung wurde abgebrochen.');
-      } else if (e.errorCode === 'popup_window_error') {
-        setError('Popup konnte nicht geöffnet werden. Bitte stelle sicher, dass Popups für diese Seite erlaubt sind.');
-      } else {
-        setError(`Anmeldung fehlgeschlagen: ${e.errorMessage || 'Unbekannter Fehler'}`);
-      }
-    } finally {
+      setError(`Anmeldung fehlgeschlagen: ${e.errorMessage || 'Unbekannter Fehler'}`);
       setIsLoading(false);
     }
   };

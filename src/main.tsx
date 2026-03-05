@@ -13,20 +13,31 @@ if (!rootElement) {
 }
 
 msalInstance.initialize().then(() => {
-  const accounts = msalInstance.getAllAccounts();
-  if (accounts.length > 0) {
-    msalInstance.setActiveAccount(accounts[0]);
-  }
-
-  createRoot(rootElement).render(
-    <StrictMode>
-      <MsalProvider instance={msalInstance}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </MsalProvider>
-    </StrictMode>
-  );
+  msalInstance.handleRedirectPromise()
+    .then((response) => {
+      if (response) {
+        msalInstance.setActiveAccount(response.account);
+      } else {
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) {
+          msalInstance.setActiveAccount(accounts[0]);
+        }
+      }
+    })
+    .catch((error) => {
+      console.error('Redirect handling error:', error);
+    })
+    .finally(() => {
+      createRoot(rootElement).render(
+        <StrictMode>
+          <MsalProvider instance={msalInstance}>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </MsalProvider>
+        </StrictMode>
+      );
+    });
 }).catch((error) => {
   console.error('MSAL initialization error:', error);
   createRoot(rootElement).render(
