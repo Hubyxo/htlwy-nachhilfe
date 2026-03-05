@@ -12,32 +12,29 @@ if (!rootElement) {
   throw new Error('Root element not found');
 }
 
-msalInstance.initialize().then(() => {
-  msalInstance.handleRedirectPromise().then((response) => {
+msalInstance.initialize().then(async () => {
+  try {
+    const response = await msalInstance.handleRedirectPromise();
     if (response) {
       console.log('Login successful:', response);
+      const accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        msalInstance.setActiveAccount(accounts[0]);
+      }
     }
-    createRoot(rootElement).render(
-      <StrictMode>
-        <MsalProvider instance={msalInstance}>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </MsalProvider>
-      </StrictMode>
-    );
-  }).catch((error) => {
+  } catch (error) {
     console.error('Redirect error:', error);
-    createRoot(rootElement).render(
-      <StrictMode>
-        <MsalProvider instance={msalInstance}>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </MsalProvider>
-      </StrictMode>
-    );
-  });
+  }
+
+  createRoot(rootElement).render(
+    <StrictMode>
+      <MsalProvider instance={msalInstance}>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </MsalProvider>
+    </StrictMode>
+  );
 }).catch((error) => {
   console.error('MSAL initialization error:', error);
   createRoot(rootElement).render(

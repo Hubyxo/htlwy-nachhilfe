@@ -41,7 +41,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!isAuthenticated || !account?.localAccountId) {
+      const currentAccounts = instance.getAllAccounts();
+      const currentAccount = account || currentAccounts[0];
+
+      if (!isAuthenticated || !currentAccount?.localAccountId) {
         setUser(null);
         setCoachProfile(null);
         setIsLoading(false);
@@ -51,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const response = await instance.acquireTokenSilent({
           scopes: ['User.Read'],
-          account: account,
+          account: currentAccount,
         });
 
         const graphResponse = await fetch('https://graph.microsoft.com/v1.0/me', {
@@ -65,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         let { data, error } = await supabase
           .from('users')
           .select('*')
-          .eq('id', account.localAccountId)
+          .eq('id', currentAccount.localAccountId)
           .maybeSingle();
 
         if (error) {
@@ -76,9 +79,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (!data) {
           const newUser = {
-            id: account.localAccountId,
-            email: graphData.mail || graphData.userPrincipalName || account.username || '',
-            display_name: graphData.displayName || account.name || 'Unbekannt',
+            id: currentAccount.localAccountId,
+            email: graphData.mail || graphData.userPrincipalName || currentAccount.username || '',
+            display_name: graphData.displayName || currentAccount.name || 'Unbekannt',
             role: 'student' as const,
           };
 
