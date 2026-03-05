@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMsal } from '@azure/msal-react';
 import { loginRequest } from '../lib/msalConfig';
-import { Hero } from 'lucide-react';
+import { Heater as Hero } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { instance } = useMsal();
