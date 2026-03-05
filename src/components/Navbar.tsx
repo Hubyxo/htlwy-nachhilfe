@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, coachProfile, logout } = useAuth();
   const isAuthenticated = !!user;
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
     { label: 'Mein Profil', path: '/profil', icon: User, coachOnly: false },
     { label: 'Buchungsanfragen', path: '/meine-coachings', icon: ClipboardList, coachOnly: true },
     { label: 'Meine Coaches', path: '/meine-coaches', icon: GraduationCap, coachOnly: false },
-  ].filter((item) => !item.coachOnly || user?.role === 'coach');
+  ].filter((item) => !item.coachOnly || user?.role === 'coach' || !!coachProfile);
 
   const handleProfileNav = (path: string) => {
     setIsProfileOpen(false);
