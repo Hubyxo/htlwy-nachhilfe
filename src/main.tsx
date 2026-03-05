@@ -6,12 +6,14 @@ import { AuthProvider } from './contexts/AuthContext';
 import App from './App.tsx';
 import './index.css';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <MsalProvider instance={msalInstance}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </MsalProvider>
-  </StrictMode>
-);
+msalInstance.initialize().then(() => {
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <MsalProvider instance={msalInstance}>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </MsalProvider>
+    </StrictMode>
+  );
+});
