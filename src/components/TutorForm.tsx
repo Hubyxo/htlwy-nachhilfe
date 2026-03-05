@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, AlertCircle } from 'lucide-react';
+import { Check, CircleAlert as AlertCircle } from 'lucide-react';
 import { useMsal, useAccount } from '@azure/msal-react';
 import { supabase } from '../lib/supabase';
 
