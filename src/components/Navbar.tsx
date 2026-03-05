@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, LogOut } from 'lucide-react';
-import { useIsAuthenticated } from '@azure/msal-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const isAuthenticated = useIsAuthenticated();
   const { user, logout } = useAuth();
+  const isAuthenticated = !!user;
 
   useEffect(() => {
     const handleScroll = () => {

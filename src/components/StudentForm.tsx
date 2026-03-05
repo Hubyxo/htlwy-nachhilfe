@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Check, CircleAlert as AlertCircle } from 'lucide-react';
-import { useMsal, useAccount } from '@azure/msal-react';
+import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
 const StudentForm: React.FC = () => {
-  const { instance, accounts } = useMsal();
-  const account = useAccount(accounts[0] || null);
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -23,29 +22,16 @@ const StudentForm: React.FC = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!account) {
+      if (!user) {
         setIsLoading(false);
         return;
       }
 
       try {
-        const response = await instance.acquireTokenSilent({
-          scopes: ['User.Read'],
-          account: account,
-        });
-
-        const graphResponse = await fetch('https://graph.microsoft.com/v1.0/me?$select=displayName,mail,userPrincipalName', {
-          headers: {
-            Authorization: `Bearer ${response.accessToken}`,
-          },
-        });
-
-        const userData = await graphResponse.json();
-
         setFormData(prev => ({
           ...prev,
-          fullName: userData.displayName || account.name || '',
-          email: userData.mail || userData.userPrincipalName || '',
+          fullName: user.display_name || '',
+          email: user.email || '',
         }));
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -55,7 +41,7 @@ const StudentForm: React.FC = () => {
     };
 
     fetchUserData();
-  }, [account, instance]);
+  }, [user]);
 
   const subjects = [
     'Mathematik',

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useIsAuthenticated, useMsal, useAccount } from '@azure/msal-react';
 import { supabase } from '../lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
 interface UserProfile {
   id: string;
@@ -27,61 +27,35 @@ interface AuthContextType {
   coachProfile: CoachProfile | null;
   isLoading: boolean;
   logout: () => void;
+  signInWithAzure: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isAuthenticated = useIsAuthenticated();
-  const { accounts, instance } = useMsal();
-  const account = useAccount(accounts[0] || null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [coachProfile, setCoachProfile] = useState<CoachProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      const currentAccounts = instance.getAllAccounts();
-      const currentAccount = account || currentAccounts[0];
-
-      if (!isAuthenticated || !currentAccount?.localAccountId) {
-        setUser(null);
-        setCoachProfile(null);
-        setIsLoading(false);
-        return;
-      }
-
+    const fetchUserProfile = async (authUser: User) => {
       try {
-        const response = await instance.acquireTokenSilent({
-          scopes: ['User.Read'],
-          account: currentAccount,
-        });
-
-        const graphResponse = await fetch('https://graph.microsoft.com/v1.0/me', {
-          headers: {
-            Authorization: `Bearer ${response.accessToken}`,
-          },
-        });
-
-        const graphData = await graphResponse.json();
-
         let { data, error } = await supabase
           .from('users')
           .select('*')
-          .eq('id', currentAccount.localAccountId)
+          .eq('id', authUser.id)
           .maybeSingle();
 
         if (error) {
           console.error('Error fetching user:', error);
-          setIsLoading(false);
           return;
         }
 
         if (!data) {
           const newUser = {
-            id: currentAccount.localAccountId,
-            email: graphData.mail || graphData.userPrincipalName || currentAccount.username || '',
-            display_name: graphData.displayName || currentAccount.name || 'Unbekannt',
+            id: authUser.id,
+            email: authUser.email || '',
+            display_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || 'Unbekannt',
             role: 'student' as const,
           };
 
@@ -93,7 +67,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           if (createError) {
             console.error('Error creating user:', createError);
-            setIsLoading(false);
             return;
           }
 
@@ -115,25 +88,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
           }
         }
-
-        setIsLoading(false);
       } catch (err) {
         console.error('Error in fetchUserProfile:', err);
-        setIsLoading(false);
       }
     };
 
-    fetchUserProfile();
-  }, [isAuthenticated, account?.localAccountId, instance]);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchUserProfile(session.user);
+      }
+      setIsLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        fetchUserProfile(session.user);
+      } else {
+        setUser(null);
+        setCoachProfile(null);
+      }
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signInWithAzure = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+        scopes: 'email',
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) {
+      console.error('Error signing in with Azure:', error);
+      throw error;
+    }
+  };
 
   const logout = async () => {
-    await instance.logoutRedirect();
+    await supabase.auth.signOut();
     setUser(null);
     setCoachProfile(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, coachProfile, isLoading, logout }}>
+    <AuthContext.Provider value={{ user, coachProfile, isLoading, logout, signInWithAzure }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Check, CircleAlert as AlertCircle } from 'lucide-react';
-import { useMsal, useAccount } from '@azure/msal-react';
+import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
 type Department = 'Informationstechnologie' | 'Maschinenbau' | 'Mechatronik' | 'Elektrotechnik' | 'Wirtschaftsingenieure' | '';
 
 const TutorForm: React.FC = () => {
-  const { instance, accounts } = useMsal();
-  const account = useAccount(accounts[0] || null);
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -26,30 +25,16 @@ const TutorForm: React.FC = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!account) {
+      if (!user) {
         setIsLoading(false);
         return;
       }
 
       try {
-        const response = await instance.acquireTokenSilent({
-          scopes: ['User.Read'],
-          account: account,
-        });
-
-        const graphResponse = await fetch('https://graph.microsoft.com/v1.0/me?$select=displayName,mail,userPrincipalName,department,jobTitle', {
-          headers: {
-            Authorization: `Bearer ${response.accessToken}`,
-          },
-        });
-
-        const userData = await graphResponse.json();
-
         setFormData(prev => ({
           ...prev,
-          fullName: userData.displayName || account.name || '',
-          email: userData.mail || userData.userPrincipalName || '',
-          department: mapDepartment(userData.department || userData.jobTitle || ''),
+          fullName: user.display_name || '',
+          email: user.email || '',
         }));
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -59,17 +44,7 @@ const TutorForm: React.FC = () => {
     };
 
     fetchUserData();
-  }, [account, instance]);
-
-  const mapDepartment = (dept: string): Department => {
-    const deptLower = dept.toLowerCase();
-    if (deptLower.includes('informationstechnologie') || deptLower.includes('it')) return 'Informationstechnologie';
-    if (deptLower.includes('maschinenbau')) return 'Maschinenbau';
-    if (deptLower.includes('mechatronik')) return 'Mechatronik';
-    if (deptLower.includes('elektrotechnik')) return 'Elektrotechnik';
-    if (deptLower.includes('wirtschaftsingenieur')) return 'Wirtschaftsingenieure';
-    return '';
-  };
+  }, [user]);
 
   const departments: { name: Department; color: string }[] = [
     { name: 'Informationstechnologie', color: '#ec7404' },

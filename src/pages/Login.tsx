@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useMsal } from '@azure/msal-react';
 import { useNavigate } from 'react-router-dom';
-import { loginRequest } from '../lib/msalConfig';
 import { useAuth } from '../contexts/AuthContext';
 import { Heater as Hero, CircleAlert as AlertCircle } from 'lucide-react';
 
 const Login: React.FC = () => {
-  const { instance, accounts } = useMsal();
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading, signInWithAzure } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,18 +22,15 @@ const Login: React.FC = () => {
     setIsLoading(true);
     try {
       sessionStorage.setItem('redirectAfterLogin', '/');
-      await instance.loginRedirect({
-        ...loginRequest,
-        prompt: 'select_account',
-      });
+      await signInWithAzure();
     } catch (e: any) {
       console.error('Login failed:', e);
-      setError(`Anmeldung fehlgeschlagen: ${e.errorMessage || 'Unbekannter Fehler'}`);
+      setError(`Anmeldung fehlgeschlagen: ${e.message || 'Unbekannter Fehler'}`);
       setIsLoading(false);
     }
   };
 
-  if (authLoading || (accounts.length > 0 && !user)) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center px-4">
         <div className="text-center text-white">

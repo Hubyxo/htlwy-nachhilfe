@@ -1,10 +1,11 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useIsAuthenticated } from '@azure/msal-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Hero: React.FC = () => {
-  const isAuthenticated = useIsAuthenticated();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
 
   return (
     <div className="relative bg-gradient-to-br from-blue-900 to-blue-700 text-white">
