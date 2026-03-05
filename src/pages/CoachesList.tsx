@@ -80,12 +80,6 @@ const CoachesList: React.FC = () => {
     setBookingState({ coachId: tutor.id, status: 'loading' });
 
     try {
-      if (tutor.email === user.email) {
-        setBookingState({ coachId: tutor.id, status: 'self' });
-        setTimeout(() => setBookingState(null), 4000);
-        return;
-      }
-
       const { data: coachUser } = await supabase
         .from('users')
         .select('id')
@@ -94,6 +88,12 @@ const CoachesList: React.FC = () => {
 
       if (!coachUser) {
         setBookingState({ coachId: tutor.id, status: 'no_account' });
+        setTimeout(() => setBookingState(null), 4000);
+        return;
+      }
+
+      if (coachUser.id === user.id) {
+        setBookingState({ coachId: tutor.id, status: 'self' });
         setTimeout(() => setBookingState(null), 4000);
         return;
       }
