@@ -144,7 +144,7 @@ const TutorForm: React.FC = () => {
     setErrorMessage('');
 
     try {
-      if (!formData.fullName.trim() || !formData.email.trim() || !formData.department || formData.subjects.length === 0) {
+      if (!formData.fullName.trim() || !formData.email.trim() || !formData.department || formData.subjects.length === 0 || !formData.availability.trim()) {
         throw new Error('Bitte fülle alle erforderlichen Felder aus.');
       }
 
@@ -388,7 +388,7 @@ const TutorForm: React.FC = () => {
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Verfügbarkeit / Zeitfenster</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Verfügbarkeit / Zeitfenster *</label>
         <textarea
           value={formData.availability}
           onChange={(e) => setFormData(prev => ({ ...prev, availability: e.target.value }))}
