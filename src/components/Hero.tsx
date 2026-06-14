@@ -30,7 +30,7 @@ const Hero: React.FC = () => {
                 to="/tutor-werden"
                 className="bg-white text-blue-700 hover:bg-gray-100 transition-colors px-6 py-3 rounded-md font-medium text-center flex items-center justify-center"
               >
-                <span>Nachhilfecoach werden</span>
+                <span>Nachhilfecoachwerden</span>
                 <ArrowRight size={16} className="ml-2" />
               </Link>
               <Link
