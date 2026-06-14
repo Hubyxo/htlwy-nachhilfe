@@ -5,7 +5,7 @@ const InfoSection: React.FC = () => {
   const benefits = [
     {
       icon: <BookOpen className="h-8 w-8 text-blue-600" />,
-      title: 'Direkte Buchungen',
+      title: 'Direkte Buchung',
       description:
         'Schüler suchen einen passenden Coach, sehen dessen Fächer und Verfügbarkeit – und schicken direkt eine Buchungsanfrage.',
     },
