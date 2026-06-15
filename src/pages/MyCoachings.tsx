@@ -88,7 +88,7 @@ const MyCoachings: React.FC = () => {
     fetchCoachingBookings();
   }, [user, coachProfile]);
 
-  const handleConfirm = async (bookingId: string, studentId: string, studentName: string) => {
+  const handleConfirm = async (bookingId: string, studentId: string, studentName: string, studentEmail: string, subject: string | null) => {
     setActionLoading(bookingId);
     try {
       const { error } = await supabase
@@ -104,6 +104,27 @@ const MyCoachings: React.FC = () => {
         message: `${user!.display_name} hat deine Buchungsanfrage angenommen! Schreib ihm/ihr eine E-Mail um alles weitere zu besprechen: ${user!.email}`,
         read: false,
       });
+
+      // Send confirmation email to student
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            to: studentEmail,
+            type: 'booking_confirmed',
+            data: {
+              coachName: user!.display_name,
+              coachEmail: user!.email,
+              subject: subject || 'Nachhilfe',
+            },
+          }),
+        }).catch((err) => console.error('Email error:', err));
+      }
 
       setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, status: 'confirmed' } : b)));
     } catch (err) {
@@ -147,6 +168,27 @@ const MyCoachings: React.FC = () => {
         message: `${user!.display_name} hat deine Buchungsanfrage leider abgelehnt.${reasonText}`,
         read: false,
       });
+
+      // Send rejection email to student
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            to: booking.student.email,
+            type: 'booking_rejected',
+            data: {
+              coachName: user!.display_name,
+              subject: booking.subject || 'Nachhilfe',
+              reason: trimmedReason || undefined,
+            },
+          }),
+        }).catch((err) => console.error('Email error:', err));
+      }
 
       setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, status: 'cancelled' } : b)));
     } catch (err) {
@@ -315,7 +357,7 @@ const MyCoachings: React.FC = () => {
                     {booking.status === 'pending' && (
                       <div className="mt-4 flex gap-2">
                         <button
-                          onClick={() => handleConfirm(booking.id, booking.student_id, booking.student.display_name)}
+                          onClick={() => handleConfirm(booking.id, booking.student_id, booking.student.display_name, booking.student.email, booking.subject)}
                           disabled={actionLoading === booking.id}
                           className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-60 text-sm font-medium"
                         >

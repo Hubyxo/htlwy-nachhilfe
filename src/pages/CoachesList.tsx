@@ -23,6 +23,8 @@ interface BookingState {
 interface SubjectModalState {
   tutor: Tutor;
   selected: string;
+  blockedSubjects: string[];
+  loadingBlocked: boolean;
 }
 
 const CoachesList: React.FC = () => {
@@ -80,13 +82,56 @@ const CoachesList: React.FC = () => {
     ? coaches.filter((coach) => coach.subjects.includes(selectedSubject))
     : coaches;
 
-  const openBookingModal = (tutor: Tutor) => {
-    setSubjectModal({ tutor, selected: tutor.subjects[0] || '' });
+  const openBookingModal = async (tutor: Tutor) => {
+    setSubjectModal({ tutor, selected: tutor.subjects[0] || '', blockedSubjects: [], loadingBlocked: true });
+
+    if (!user) return;
+
+    try {
+      const { data: coachUser } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', tutor.email)
+        .maybeSingle();
+
+      if (!coachUser) {
+        setSubjectModal((prev) => prev ? { ...prev, loadingBlocked: false } : null);
+        return;
+      }
+
+      const { data: coachProfile } = await supabase
+        .from('coach_profiles')
+        .select('id')
+        .eq('user_id', coachUser.id)
+        .maybeSingle();
+
+      if (!coachProfile) {
+        setSubjectModal((prev) => prev ? { ...prev, loadingBlocked: false } : null);
+        return;
+      }
+
+      const { data: activeBookings } = await supabase
+        .from('bookings')
+        .select('subject')
+        .eq('student_id', user.id)
+        .eq('coach_id', coachProfile.id)
+        .in('status', ['pending', 'confirmed']);
+
+      const blocked = (activeBookings || []).map((b) => b.subject as string);
+      const firstAvailable = tutor.subjects.find((s) => !blocked.includes(s)) ?? tutor.subjects[0] ?? '';
+
+      setSubjectModal((prev) =>
+        prev ? { ...prev, blockedSubjects: blocked, loadingBlocked: false, selected: firstAvailable } : null
+      );
+    } catch {
+      setSubjectModal((prev) => prev ? { ...prev, loadingBlocked: false } : null);
+    }
   };
 
   const handleBookCoach = async () => {
     if (!user || !subjectModal) return;
-    const { tutor, selected } = subjectModal;
+    const { tutor, selected, blockedSubjects } = subjectModal;
+    if (blockedSubjects.includes(selected)) return;
     setSubjectModal(null);
 
     setBookingState({ coachId: tutor.id, status: 'loading' });
@@ -137,6 +182,27 @@ const CoachesList: React.FC = () => {
         message: `${user.display_name} hat eine Buchungsanfrage für ${selected} gestellt.`,
         read: false,
       });
+
+      // Send email to coach
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            to: tutor.email,
+            type: 'booking_request',
+            data: {
+              studentName: user.display_name,
+              studentEmail: user.email,
+              subject: selected,
+            },
+          }),
+        }).catch((err) => console.error('Email error:', err));
+      }
 
       setBookingState({ coachId: tutor.id, status: 'success' });
       setTimeout(() => setBookingState(null), 4000);
@@ -351,19 +417,33 @@ const CoachesList: React.FC = () => {
               Für welches Fach möchtest du <span className="font-medium text-gray-700">{subjectModal.tutor.full_name}</span> buchen?
             </p>
             <div className="flex flex-col gap-2 mb-6">
-              {subjectModal.tutor.subjects.map((subject) => (
-                <button
-                  key={subject}
-                  onClick={() => setSubjectModal({ ...subjectModal, selected: subject })}
-                  className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-colors ${
-                    subjectModal.selected === subject
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 hover:border-blue-200 text-gray-700'
-                  }`}
-                >
-                  {subject}
-                </button>
-              ))}
+              {subjectModal.tutor.subjects.map((subject) => {
+                const isBlocked = subjectModal.blockedSubjects.includes(subject);
+                const isSelected = subjectModal.selected === subject;
+                return (
+                  <button
+                    key={subject}
+                    onClick={() => !isBlocked && setSubjectModal({ ...subjectModal, selected: subject })}
+                    disabled={isBlocked || subjectModal.loadingBlocked}
+                    className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-colors ${
+                      isBlocked
+                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
+                        : isSelected
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-200 hover:border-blue-200 text-gray-700'
+                    }`}
+                  >
+                    <span className="flex items-center justify-between">
+                      <span>{subject}</span>
+                      {isBlocked && (
+                        <span className="text-xs font-normal text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200">
+                          Bereits aktiv
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
             <div className="flex gap-3">
               <button
@@ -374,7 +454,7 @@ const CoachesList: React.FC = () => {
               </button>
               <button
                 onClick={handleBookCoach}
-                disabled={!subjectModal.selected}
+                disabled={!subjectModal.selected || subjectModal.blockedSubjects.includes(subjectModal.selected) || subjectModal.loadingBlocked}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 <CalendarPlus size={15} />
