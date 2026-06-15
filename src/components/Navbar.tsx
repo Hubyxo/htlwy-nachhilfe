@@ -96,8 +96,8 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <img src="/Logo_HTLWaidhofen.png" alt="HTL Logo" className="h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
-            <span className="text-lg font-bold text-gray-900 tracking-tight">
-              HTL <span className="text-blue-600">Nachhilfe</span>
+            <span className={`text-lg font-bold tracking-tight transition-colors duration-300 ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
+              HTL <span className="text-blue-400">Nachhilfe</span>
             </span>
           </Link>
 
@@ -109,21 +109,21 @@ const Navbar: React.FC = () => {
                 to={link.path}
                 className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                   location.pathname === link.path
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100/80'
+                    ? isScrolled ? 'text-blue-600 bg-blue-50' : 'text-blue-300 bg-white/10'
+                    : isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-100/80' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
                 {link.name}
                 {location.pathname === link.path && (
-                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full" />
+                  <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${isScrolled ? 'bg-blue-600' : 'bg-blue-300'}`} />
                 )}
               </Link>
             ))}
 
-            <div className="flex items-center gap-1.5 ml-2 pl-2 border-l border-gray-200">
+            <div className={`flex items-center gap-1.5 ml-2 pl-2 border-l transition-colors duration-300 ${isScrolled ? 'border-gray-200' : 'border-white/20'}`}>
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200"
+                className={`p-2 rounded-lg transition-all duration-200 ${isScrolled ? 'text-gray-500 hover:text-gray-900 hover:bg-gray-100' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                 aria-label="Darkmode umschalten"
               >
                 {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
@@ -135,15 +135,15 @@ const Navbar: React.FC = () => {
                   <div className="relative" ref={profileRef}>
                     <button
                       onClick={() => setIsProfileOpen(!isProfileOpen)}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 group"
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-200 group ${isScrolled ? 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50' : 'border-white/20 hover:border-white/40 hover:bg-white/10'}`}
                     >
                       <Avatar size="sm" />
-                      <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700 max-w-[120px] truncate">
+                      <span className={`text-sm font-medium max-w-[120px] truncate transition-colors duration-300 ${isScrolled ? 'text-gray-700 group-hover:text-blue-700' : 'text-white/90 group-hover:text-white'}`}>
                         {user?.display_name}
                       </span>
                       <ChevronDown
                         size={14}
-                        className={`text-gray-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
+                        className={`transition-all duration-200 ${isProfileOpen ? 'rotate-180' : ''} ${isScrolled ? 'text-gray-400' : 'text-white/50'}`}
                       />
                     </button>
 
@@ -192,7 +192,7 @@ const Navbar: React.FC = () => {
           {/* Mobile button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+            className={`md:hidden p-2 rounded-lg transition-colors ${isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
             aria-label="Menü"
           >
             {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
