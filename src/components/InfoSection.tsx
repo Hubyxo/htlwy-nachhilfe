@@ -125,9 +125,9 @@ const InfoSection: React.FC = () => {
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-br from-blue-100 to-blue-50 rounded-3xl" />
                 <img
-                  src="https://images.pexels.com/photos/8199562/pexels-photo-8199562.jpeg"
-                  alt="Schüler lernen gemeinsam"
-                  className="relative rounded-2xl shadow-xl w-full h-80 object-cover"
+                  src="/it1.jpg"
+                  alt="Schüler lernen gemeinsam an der HTL"
+                  className="relative rounded-2xl shadow-xl w-full h-80 object-cover object-center"
                 />
                 {/* Floating badge */}
                 <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
