@@ -1,69 +1,72 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Banknote, BookOpenCheck, MessageSquare, Star, UserCheck } from 'lucide-react';
 
 const TutorApplication: React.FC = () => {
+  const benefits = [
+    { icon: <BookOpenCheck size={18} />, color: 'bg-blue-100 text-blue-600', text: 'Festige dein eigenes Wissen durch das Erklären' },
+    { icon: <Star size={18} />, color: 'bg-amber-100 text-amber-600', text: 'Sammle wertvolle Erfahrungen für deinen Lebenslauf' },
+    { icon: <Banknote size={18} />, color: 'bg-emerald-100 text-emerald-600', text: 'Erhalte ca. 10€ oder mehr pro Stunde für deinen Unterricht' },
+    { icon: <MessageSquare size={18} />, color: 'bg-violet-100 text-violet-600', text: 'Entwickle deine Kommunikations- und Präsentationsfähigkeiten' },
+    { icon: <UserCheck size={18} />, color: 'bg-rose-100 text-rose-600', text: 'Du entscheidest selbst, welche Buchungsanfragen du annimmst' },
+  ];
+
   return (
-    <div className="pt-20 pb-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Werde Nachhilfecoach</h1>
-          <p className="text-lg text-gray-600 mb-8">
-            Du bist gut in bestimmten Fächern und möchtest dein Wissen weitergeben? Erstelle dein Coach-Profil auf der Plattform – und Mitschüler können dich direkt buchen.
-          </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900 pt-28 pb-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-dot-grid-dark" />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-blue-600/15 rounded-full blur-[100px]" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-2xl">
+            <p className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">Coach werden</p>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
+              Werde Nachhilfecoach
+            </h1>
+            <p className="text-blue-100/60 text-lg">
+              Gut in bestimmten Fächern? Gib dein Wissen weiter – und profitiere selbst davon.
+            </p>
+          </div>
+        </div>
+      </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Vorteile als Nachhilfecoach</h2>
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-3xl mx-auto space-y-8">
 
-            <ul className="space-y-3 text-gray-700 mb-6">
-              <li className="flex items-start">
-                <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Festige dein eigenes Wissen durch das Erklären</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Sammle wertvolle Erfahrungen für deinen Lebenslauf</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Erhalte ca. 10€ oder mehr pro Stunde für deinen Unterricht</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Entwickle deine Kommunikations- und Präsentationsfähigkeiten</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Du entscheidest selbst, welche Buchungsanfragen du annimmst</span>
-              </li>
+          {/* Benefits */}
+          <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Deine Vorteile als Coach</h2>
+            <ul className="space-y-4">
+              {benefits.map((b, i) => (
+                <li key={i} className="flex items-start gap-4">
+                  <div className={`flex-shrink-0 w-9 h-9 rounded-xl ${b.color} flex items-center justify-center`}>
+                    {b.icon}
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed pt-1.5">{b.text}</span>
+                </li>
+              ))}
             </ul>
-
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 text-blue-700">
-              <h3 className="font-medium mb-1">Wie läuft's ab?</h3>
-              <p className="text-sm">
-                Nach der Registrierung kannst du unter "Nachhilfecoach werden" dein Profil anlegen: Fächer, Abteilung, Verfügbarkeit und weitere Infos. Schüler sehen dein Profil in der Coach-Liste und können dich direkt buchen. Du bestätigst oder lehnst Anfragen ab – und macht dann per Mail einen Termin aus.
-              </p>
-            </div>
           </div>
 
-          <div className="text-center">
+          {/* How it works */}
+          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-8 text-white">
+            <h2 className="text-xl font-bold mb-4">Wie läuft's ab?</h2>
+            <p className="text-blue-100/80 text-sm leading-relaxed">
+              Nach der Anmeldung kannst du unter "Coach werden" dein Profil anlegen: Fächer, Abteilung, Verfügbarkeit und weitere Infos.
+              Schüler sehen dein Profil in der Coach-Liste und können dich direkt buchen. Du bestätigst oder lehnst Anfragen ab – und machst dann per Mail einen Termin aus.
+            </p>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center pt-2">
             <Link
               to="/tutor-werden/formular"
-              className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
+              className="group inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
             >
-              <span>Coach-Profil erstellen</span>
-              <ArrowRight className="ml-2 h-5 w-5" />
+              Coach-Profil erstellen
+              <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
+            <p className="text-sm text-gray-400 mt-3">Kostenlos & sofort sichtbar in der Coach-Liste</p>
           </div>
         </div>
       </div>
