@@ -133,6 +133,7 @@ async function sendEmail(payload: EmailPayload): Promise<boolean> {
       subject,
       html,
     });
+    console.log(`Email sent successfully to ${payload.to} (type: ${payload.type})`);
     return true;
   } catch (error) {
     console.error("Failed to send email:", error);
