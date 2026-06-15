@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Clock, ExternalLink } from 'lucide-react';
+import { Mail, MapPin, ExternalLink } from 'lucide-react';
 
 const Contact: React.FC = () => {
   const contacts = [
@@ -13,19 +13,7 @@ const Contact: React.FC = () => {
       icon: <Mail className="h-5 w-5" />,
       color: 'bg-emerald-100 text-emerald-600',
       title: 'E-Mail',
-      lines: ['office@htlwy.at', 'nachhilfe@htlwy.at'],
-    },
-    {
-      icon: <Phone className="h-5 w-5" />,
-      color: 'bg-violet-100 text-violet-600',
-      title: 'Telefon',
-      lines: ['+43 7442 52590'],
-    },
-    {
-      icon: <Clock className="h-5 w-5" />,
-      color: 'bg-amber-100 text-amber-600',
-      title: 'Öffnungszeiten',
-      lines: ['Mo – Do: 07:30 – 16:30 Uhr', 'Fr: 07:30 – 14:00 Uhr'],
+      lines: ['nachhilfe.htlwy@gmail.com', 'oliver.spring@htlwy.at'],
     },
   ];
 
@@ -48,7 +36,7 @@ const Contact: React.FC = () => {
 
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10 max-w-2xl mx-auto">
             {contacts.map((c) => (
               <div key={c.title} className="bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-md transition-all duration-200">
                 <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${c.color} mb-4`}>
