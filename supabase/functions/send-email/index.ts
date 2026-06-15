@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const FROM_EMAIL = "htlwy.nachhilfe@gmail.com";
+const FROM_EMAIL = "nachhilfe.htlwy@gmail.com";
 const WEBSITE_URL = "https://nachhilfe.htlwy.com";
 
 interface EmailPayload {
