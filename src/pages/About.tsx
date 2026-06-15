@@ -1,169 +1,162 @@
-import React from 'react';
-import { BookOpen, Award, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { BookOpen, Award, Heart, ChevronDown } from 'lucide-react';
+
+const faqs = [
+  {
+    q: 'Wer kann die Plattform nutzen?',
+    a: 'Alle Schülerinnen und Schüler der HTL Waidhofen/Ybbs können sich mit ihrem Microsoft-Schulaccount anmelden – sowohl als Schüler als auch als Coach.',
+  },
+  {
+    q: 'Wie werde ich Coach?',
+    a: 'Nach der Anmeldung kannst du unter "Coach werden" ein Profil anlegen. Danach bist du direkt in der Coach-Liste sichtbar.',
+  },
+  {
+    q: 'Wie läuft eine Buchung ab?',
+    a: 'Du suchst dir einen Coach, schickst eine Buchungsanfrage mit dem gewünschten Fach, und der Coach bestätigt oder lehnt ab. Bei Bestätigung macht der Coach per Mail einen Termin aus.',
+  },
+  {
+    q: 'Was kostet die Nachhilfe?',
+    a: 'Die Kosten werden direkt zwischen Coach und Schüler vereinbart. Als Richtwert gilt ca. 10€ pro Stunde.',
+  },
+  {
+    q: 'Wo finden die Stunden statt?',
+    a: 'Das klären Coach und Schüler selbst per Mail – ob in der Schule oder anderswo. Die Plattform übernimmt nur die Vermittlung.',
+  },
+];
+
+const FaqItem: React.FC<{ q: string; a: string }> = ({ q, a }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-gray-100 rounded-2xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+      >
+        <span className="font-semibold text-gray-900 text-sm">{q}</span>
+        <ChevronDown size={16} className={`text-gray-400 flex-shrink-0 ml-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
+      <div className={`overflow-hidden transition-all duration-300 ${open ? 'max-h-48' : 'max-h-0'}`}>
+        <p className="text-sm text-gray-600 px-6 pb-4 leading-relaxed">{a}</p>
+      </div>
+    </div>
+  );
+};
 
 const About: React.FC = () => {
+  const values = [
+    { title: 'Eigenverantwortung', desc: 'Coaches verwalten ihr Profil selbst, Schüler buchen direkt – ohne Bürokratie.' },
+    { title: 'Augenhöhe', desc: 'Wir begegnen einander als Mitschüler – offen, respektvoll und ohne Leistungsdruck.' },
+    { title: 'Gegenseitiger Nutzen', desc: 'Der Coach festigt sein Wissen, der Schüler schließt Lücken – beide profitieren.' },
+  ];
+
   return (
-    <div className="pt-20 pb-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Über unsere Plattform</h1>
-          <p className="text-lg text-gray-600 mb-8">
-            Die Nachhilfeplattform der HTL Waidhofen/Ybbs verbindet Schüler direkt mit Nachhilfecoaches – ohne Zwischenschritt, ohne Warteliste.
-          </p>
-          
-          <div className="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Unsere Mission</h2>
-            <div className="flex items-start mb-6">
-              <div className="bg-blue-100 p-3 rounded-full mr-4 flex-shrink-0">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-gray-900 via-blue-950 to-gray-900 pt-28 pb-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-dot-grid-dark" />
+        <div className="absolute top-0 right-1/4 w-80 h-80 bg-blue-600/15 rounded-full blur-[100px]" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-2xl">
+            <p className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">Über uns</p>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
+              Unsere Plattform
+            </h1>
+            <p className="text-blue-100/60 text-lg">
+              Wir verbinden Schüler direkt mit Nachhilfecoaches — ohne Zwischenschritt, ohne Warteliste.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto space-y-10">
+
+          {/* Mission */}
+          <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center flex-shrink-0">
                 <Heart className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-gray-700">
-                  Unsere Plattform entstand aus der Überzeugung, dass Peer-to-Peer Lernen besonders wirksam ist. Wer den Stoff selbst erst kürzlich gemeistert hat, erklärt ihn oft verständlicher als jemand, der ihn schon lange kennt.
-                </p>
-                <p className="text-gray-700 mt-4">
-                  Coaches und Schüler finden sich hier eigenständig – über ein einfaches Buchungssystem mit Microsoft-Login. Der Coach entscheidet selbst, welche Anfragen er annimmt, und macht den Termin direkt per Mail mit dem Schüler aus.
-                </p>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Unsere Mission</h2>
+                <p className="text-sm text-gray-500">Peer-to-Peer Lernen als wirksamster Ansatz</p>
               </div>
             </div>
-            
-            <div className="border-t border-gray-200 pt-6 mt-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Unsere Werte</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-800 mb-2">Eigenverantwortung</h4>
-                  <p className="text-sm text-gray-600">
-                    Coaches verwalten ihr Profil selbst, Schüler buchen direkt – ohne Bürokratie.
-                  </p>
+            <p className="text-gray-600 leading-relaxed mb-4">
+              Unsere Plattform entstand aus der Überzeugung, dass Peer-to-Peer Lernen besonders wirksam ist. Wer den Stoff selbst erst kürzlich gemeistert hat, erklärt ihn oft verständlicher als jemand, der ihn schon lange kennt.
+            </p>
+            <p className="text-gray-600 leading-relaxed">
+              Coaches und Schüler finden sich hier eigenständig – über ein einfaches Buchungssystem mit Microsoft-Login. Der Coach entscheidet selbst, welche Anfragen er annimmt, und macht den Termin direkt per Mail mit dem Schüler aus.
+            </p>
+          </div>
+
+          {/* Values */}
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-5">Unsere Werte</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {values.map((v) => (
+                <div key={v.title} className="bg-white rounded-2xl border border-gray-100 p-6 hover:border-blue-100 hover:shadow-md transition-all duration-200">
+                  <h3 className="font-semibold text-gray-900 mb-2">{v.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{v.desc}</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-800 mb-2">Augenhöhe</h4>
-                  <p className="text-sm text-gray-600">
-                    Wir begegnen einander als Mitschüler – offen, respektvoll und ohne Leistungsdruck.
-                  </p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-800 mb-2">Gegenseitiger Nutzen</h4>
-                  <p className="text-sm text-gray-600">
-                    Der Coach festigt sein Wissen, der Schüler schließt Lücken – beide profitieren.
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="mb-4">
-                <BookOpen className="h-8 w-8 text-blue-600" />
+
+          {/* For students / coaches */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              {
+                icon: <BookOpen className="h-6 w-6 text-blue-600" />,
+                bg: 'bg-blue-50',
+                title: 'Für Schüler',
+                items: [
+                  'Coaches nach Fach oder Abteilung filtern',
+                  'Direkt eine Buchungsanfrage stellen',
+                  'Status deiner Anfragen jederzeit einsehen',
+                  'Termine flexibel direkt mit dem Coach absprechen',
+                ],
+              },
+              {
+                icon: <Award className="h-6 w-6 text-amber-600" />,
+                bg: 'bg-amber-50',
+                title: 'Für Nachhilfecoaches',
+                items: [
+                  'Profil mit Fächern und Verfügbarkeit anlegen',
+                  'Buchungsanfragen annehmen oder ablehnen',
+                  'Aktive Coachings im Überblick behalten',
+                  'Mindestens 10€ pro Stunde verdienen',
+                ],
+              },
+            ].map((card) => (
+              <div key={card.title} className="bg-white rounded-3xl border border-gray-100 p-7 shadow-sm">
+                <div className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${card.bg} mb-5`}>
+                  {card.icon}
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">{card.title}</h3>
+                <ul className="space-y-3">
+                  {card.items.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-sm text-gray-700">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Für Schüler</h3>
-              <p className="text-gray-600 mb-4">
-                Als Schüler auf der Plattform kannst du:
-              </p>
-              <ul className="space-y-2 text-gray-700">
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Coaches nach Fach oder Abteilung filtern</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Direkt eine Buchungsanfrage stellen</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Den Status deiner Anfragen jederzeit einsehen</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Termine flexibel direkt mit dem Coach absprechen</span>
-                </li>
-              </ul>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="mb-4">
-                <Award className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Für Nachhilfecoaches</h3>
-              <p className="text-gray-600 mb-4">
-                Als Coach auf der Plattform kannst du:
-              </p>
-              <ul className="space-y-2 text-gray-700">
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Dein Profil mit Fächern und Verfügbarkeit anlegen</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Buchungsanfragen annehmen oder ablehnen</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Deine aktiven Coachings im Überblick behalten</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Mindestens 10€ pro Stunde verdienen</span>
-                </li>
-              </ul>
-            </div>
+            ))}
           </div>
-          
-          <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Häufig gestellte Fragen</h2>
-            
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-medium text-gray-800 mb-2">Wer kann die Plattform nutzen?</h3>
-                <p className="text-gray-600">
-                  Alle Schülerinnen und Schüler der HTL Waidhofen/Ybbs können sich mit ihrem Microsoft-Schulaccount anmelden – sowohl als Schüler als auch als Coach.
-                </p>
-              </div>
 
-              <div>
-                <h3 className="font-medium text-gray-800 mb-2">Wie werde ich Coach?</h3>
-                <p className="text-gray-600">
-                  Nach der Anmeldung kannst du unter "Nachhilfecoach werden" ein Profil anlegen. Danach bist du direkt und ohne Warten in der Coach-Liste sichtbar.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-medium text-gray-800 mb-2">Wie läuft eine Buchung ab?</h3>
-                <p className="text-gray-600">
-                  Du suchst dir einen Coach, schickst eine Buchungsanfrage mit dem gewünschten Fach, und der Coach bestätigt oder lehnt ab. Bei Bestätigung macht der Coach per Mail einen Termin mit dir aus.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-medium text-gray-800 mb-2">Was kostet die Nachhilfe?</h3>
-                <p className="text-gray-600">
-                  Die Kosten werden direkt zwischen Coach und Schüler vereinbart. Als Richtwert gilt ein Honorar von ca. 10€ pro Stunde für den Coach.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-medium text-gray-800 mb-2">Wo finden die Stunden statt?</h3>
-                <p className="text-gray-600">
-                  Das klären Coach und Schüler selbst per Mail – ob in der Schule oder anderswo. Die Plattform übernimmt nur die Vermittlung.
-                </p>
-              </div>
+          {/* FAQ */}
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-5">Häufig gestellte Fragen</h2>
+            <div className="space-y-3">
+              {faqs.map((faq) => (
+                <FaqItem key={faq.q} q={faq.q} a={faq.a} />
+              ))}
             </div>
           </div>
         </div>

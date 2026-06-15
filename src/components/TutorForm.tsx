@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Check, CircleAlert as AlertCircle } from 'lucide-react';
+import { Check, CircleAlert as AlertCircle, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import type { Department } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 const TutorForm: React.FC = () => {
   const { user, parsedClass } = useAuth();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -196,7 +198,7 @@ const TutorForm: React.FC = () => {
         additionalInfo: '',
       });
 
-      setTimeout(() => setSubmitStatus('idle'), 5000);
+      setTimeout(() => navigate('/'), 2000);
     } catch (err) {
       setSubmitStatus('error');
       setErrorMessage(err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten.');
@@ -215,15 +217,23 @@ const TutorForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Success Toast */}
       {submitStatus === 'success' && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
-          <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-medium text-green-900">Bewerbung erfolgreich eingereicht!</h3>
-            <p className="text-sm text-green-700 mt-1">
-              Vielen Dank für deine Anmeldung als Nachhilfecoach. Wir werden uns bald bei dir melden.
-            </p>
+        <div className="fixed bottom-6 right-6 z-50 flex items-start gap-3 bg-white border border-green-200 shadow-xl rounded-2xl px-5 py-4 max-w-sm animate-fade-up">
+          <div className="flex-shrink-0 w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
+            <Check className="h-5 w-5 text-green-600" />
           </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-900">Erfolgreich als Coach angemeldet!</p>
+            <p className="text-xs text-gray-500 mt-0.5">Dein Profil ist jetzt in der Coach-Liste sichtbar.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSubmitStatus('idle')}
+            className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X size={16} />
+          </button>
         </div>
       )}
 
@@ -244,7 +254,7 @@ const TutorForm: React.FC = () => {
             type="text"
             value={formData.fullName}
             readOnly
-            className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-600 cursor-not-allowed text-sm"
           />
           <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
         </div>
@@ -254,7 +264,7 @@ const TutorForm: React.FC = () => {
             type="email"
             value={formData.email}
             readOnly
-            className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-600 cursor-not-allowed text-sm"
           />
           <p className="text-xs text-gray-500 mt-1">Aus deinem Microsoft-Konto übernommen</p>
         </div>
@@ -394,7 +404,7 @@ const TutorForm: React.FC = () => {
           onChange={(e) => setFormData(prev => ({ ...prev, availability: e.target.value }))}
           placeholder="z.B. Mo-Fr nach 16:00 Uhr, Sa ganztägig"
           rows={3}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm transition-shadow"
         />
       </div>
 
@@ -405,16 +415,16 @@ const TutorForm: React.FC = () => {
           onChange={(e) => setFormData(prev => ({ ...prev, additionalInfo: e.target.value }))}
           placeholder="Erzähle uns mehr über dich, deine Stärken oder spezielle Erfahrungen..."
           rows={4}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm transition-shadow"
         />
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-blue-600 text-white font-medium py-3 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        className="w-full bg-gray-900 text-white font-semibold py-3.5 rounded-xl hover:bg-gray-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none"
       >
-        {isSubmitting ? 'Wird eingereicht...' : 'Bewerbung einreichen'}
+        {isSubmitting ? 'Wird eingereicht...' : 'Coach-Profil erstellen'}
       </button>
     </form>
   );
