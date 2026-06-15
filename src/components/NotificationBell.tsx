@@ -95,6 +95,14 @@ const NotificationBell: React.FC = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
+  const deleteOne = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    const { error } = await supabase.from('notifications').delete().eq('id', id);
+    if (!error) {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }
+  };
+
   const deleteAll = async () => {
     if (!user || notifications.length === 0) return;
     const { error } = await supabase
@@ -174,28 +182,39 @@ const NotificationBell: React.FC = () => {
               </div>
             ) : (
               notifications.map((n) => (
-                <button
+                <div
                   key={n.id}
-                  onClick={() => handleNotificationClick(n)}
-                  className={`w-full flex items-start gap-3 px-4 py-3 border-b border-gray-50 text-left hover:bg-gray-50 transition-colors ${
+                  className={`group flex items-start gap-3 px-4 py-3 border-b border-gray-50 transition-colors ${
                     !n.read ? 'bg-blue-50' : ''
                   }`}
                 >
-                  <div className={`mt-0.5 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                    !n.read ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'
-                  }`}>
-                    <BookOpen size={14} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm leading-snug ${!n.read ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
-                      {n.message}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">{formatTime(n.created_at)}</p>
-                  </div>
-                  {!n.read && (
-                    <span className="flex-shrink-0 mt-1.5 w-2 h-2 bg-blue-500 rounded-full" />
-                  )}
-                </button>
+                  <button
+                    onClick={() => handleNotificationClick(n)}
+                    className="flex items-start gap-3 flex-1 min-w-0 text-left hover:opacity-80 transition-opacity"
+                  >
+                    <div className={`mt-0.5 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                      !n.read ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'
+                    }`}>
+                      <BookOpen size={14} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm leading-snug ${!n.read ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
+                        {n.message}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">{formatTime(n.created_at)}</p>
+                    </div>
+                    {!n.read && (
+                      <span className="flex-shrink-0 mt-1.5 w-2 h-2 bg-blue-500 rounded-full" />
+                    )}
+                  </button>
+                  <button
+                    onClick={(e) => deleteOne(e, n.id)}
+                    title="Löschen"
+                    className="flex-shrink-0 mt-1 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all rounded"
+                  >
+                    <X size={13} />
+                  </button>
+                </div>
               ))
             )}
           </div>
