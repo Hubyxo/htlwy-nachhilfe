@@ -258,7 +258,7 @@ const CoachesList: React.FC = () => {
                 return (
                   <div
                     key={coach.id}
-                    className="group bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col"
+                    className="group bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 hover:border-gray-200 dark:hover:border-slate-600 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden flex flex-col"
                   >
                     {/* Color strip */}
                     <div className="h-1.5 w-full" style={{ backgroundColor: deptColor.bg }} />
@@ -274,9 +274,9 @@ const CoachesList: React.FC = () => {
                             {coach.full_name.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <h3 className="font-bold text-gray-900 leading-tight">{coach.full_name}</h3>
+                            <h3 className="font-bold text-gray-900 dark:text-slate-100 leading-tight">{coach.full_name}</h3>
                             {coach.school_year && (
-                              <p className="text-xs text-gray-400 mt-0.5">{coach.school_year}</p>
+                              <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">{coach.school_year}</p>
                             )}
                           </div>
                         </div>
@@ -290,12 +290,12 @@ const CoachesList: React.FC = () => {
 
                       {/* Subjects */}
                       <div className="mb-5 flex-1">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Fächer</p>
+                        <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide mb-2">Fächer</p>
                         <div className="flex flex-wrap gap-1.5">
                           {coach.subjects.map((subject) => (
                             <span
                               key={subject}
-                              className="inline-block px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg border border-blue-100"
+                              className="inline-block px-2.5 py-1 bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-lg border border-blue-100 dark:border-blue-500/30"
                             >
                               {subject}
                             </span>
@@ -304,7 +304,7 @@ const CoachesList: React.FC = () => {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex gap-2 pt-4 border-t border-gray-100">
+                      <div className="flex gap-2 pt-4 border-t border-gray-100 dark:border-slate-700">
                         {user ? (
                           <button
                             onClick={() => openBookingModal(coach)}
@@ -324,7 +324,7 @@ const CoachesList: React.FC = () => {
                         )}
                         <button
                           onClick={() => setSelectedCoach(coach)}
-                          className="flex-1 px-4 py-2.5 border-2 border-gray-200 text-gray-700 rounded-xl hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50 transition-all duration-200 text-sm font-semibold"
+                          className="flex-1 px-4 py-2.5 border-2 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-slate-300 rounded-xl hover:border-blue-300 hover:text-blue-700 dark:hover:border-blue-500 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all duration-200 text-sm font-semibold"
                         >
                           Mehr Info
                         </button>
