@@ -1,11 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Mail, MapPin, ExternalLink, ArrowRight } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Footer: React.FC = () => {
+  const { user } = useAuth();
+  const { pathname } = useLocation();
+  const showCtaBand = pathname === '/' && !user;
+
   return (
     <footer className="bg-gray-950 text-white">
-      {/* CTA band */}
+      {/* CTA band — only on home when logged out */}
+      {showCtaBand && (
       <div className="border-b border-white/5">
         <div className="container mx-auto px-4 py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -23,6 +29,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Main footer */}
       <div className="container mx-auto px-4 py-12">
