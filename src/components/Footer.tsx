@@ -107,7 +107,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={15} className="text-gray-500 flex-shrink-0" />
-                <span className="text-gray-500 text-sm">oliver.spring@htlwy.at</span>
+                <a href="mailto:oliver.spring@htlwy.at" className="text-gray-500 text-sm hover:text-white transition-colors duration-200">oliver.spring@htlwy.at</a>
               </li>
               <li className="flex items-center gap-3">
                 <ExternalLink size={15} className="text-gray-500 flex-shrink-0" />
