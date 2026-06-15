@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, BookOpen, GraduationCap, LogOut, ClipboardList, Inbox, CalendarClock } from 'lucide-react';
+import { Menu, X, User, BookOpen, GraduationCap, LogOut, ClipboardList, Inbox, CalendarClock, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import NotificationBell from './NotificationBell';
 
 const Navbar: React.FC = () => {
@@ -11,6 +12,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, coachProfile, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const isAuthenticated = !!user;
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -117,6 +119,13 @@ const Navbar: React.FC = () => {
             ))}
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-full text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors"
+                  aria-label="Dark mode umschalten"
+                >
+                  {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
                 <NotificationBell />
               <div className="relative" ref={profileRef}>
                 <button
@@ -162,12 +171,21 @@ const Navbar: React.FC = () => {
               </div>
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-              >
-                Anmelden
-              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-full text-gray-600 hover:text-blue-600 hover:bg-gray-100 transition-colors"
+                  aria-label="Dark mode umschalten"
+                >
+                  {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
+                <Link
+                  to="/login"
+                  className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  Anmelden
+                </Link>
+              </div>
             )}
           </nav>
 
@@ -243,6 +261,13 @@ const Navbar: React.FC = () => {
                 Anmelden
               </Link>
             )}
+            <button
+              onClick={toggleTheme}
+              className="flex items-center space-x-3 py-2 text-base text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+              <span>{theme === 'dark' ? 'Heller Modus' : 'Dunkler Modus'}</span>
+            </button>
           </div>
         </div>
       </div>

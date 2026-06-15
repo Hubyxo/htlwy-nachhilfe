@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -24,6 +25,7 @@ import Buchungen from './pages/Buchungen';
 
 function App() {
   return (
+    <ThemeProvider>
     <Router>
       <AuthProvider>
         <ScrollToTop />
@@ -55,6 +57,7 @@ function App() {
         </div>
       </AuthProvider>
     </Router>
+    </ThemeProvider>
   );
 }
 
