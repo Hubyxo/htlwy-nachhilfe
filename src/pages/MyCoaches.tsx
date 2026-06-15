@@ -112,7 +112,7 @@ const MyCoaches: React.FC = () => {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-4">
                         {entry.coachUser.profile_image_url ? (
-                          <img src={entry.coachUser.profile_image_url} alt={entry.coachUser.display_name} className="w-13 h-13 rounded-xl object-cover flex-shrink-0 w-12 h-12" />
+                          <img src={entry.coachUser.profile_image_url} alt={entry.coachUser.display_name} className="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
                         ) : (
                           <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0" style={{ backgroundColor: deptColor.bg }}>
                             {entry.coachUser.display_name?.charAt(0).toUpperCase()}

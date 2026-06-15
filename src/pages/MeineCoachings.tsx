@@ -155,7 +155,7 @@ const MeineCoachings: React.FC = () => {
                 <h2 className="text-lg font-bold text-gray-900">Coaching abschließen</h2>
                 <p className="text-sm text-gray-500">mit {completeModal.studentName}</p>
               </div>
-              <button onClick={() => setCompleteModal(null)} className="p-1.5 rounded-xl hover:bg-gray-100 transition-colors">
+              <button onClick={() => { setCompleteModal(null); setCompleteReason(''); }} className="p-1.5 rounded-xl hover:bg-gray-100 transition-colors">
                 <X size={18} className="text-gray-400" />
               </button>
             </div>
@@ -172,7 +172,7 @@ const MeineCoachings: React.FC = () => {
               />
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setCompleteModal(null)} className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">Abbrechen</button>
+              <button onClick={() => { setCompleteModal(null); setCompleteReason(''); }} className="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">Abbrechen</button>
               <button onClick={handleComplete} className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors">Abschließen</button>
             </div>
           </div>
