@@ -190,3 +190,71 @@ html.dark .glass {
   background: rgba(15, 23, 42, 0.88);
   border-bottom: 1px solid rgba(51, 65, 85, 0.8);
 }
+
+/* ── Dark mode: Amber/yellow tints ───────────────── */
+html.dark .bg-amber-50 {
+  background-color: #2d2008 !important;
+}
+
+html.dark .bg-amber-100 {
+  background-color: #3d2b0a !important;
+}
+
+/* ── Dark mode: Emerald tints ────────────────────── */
+html.dark .bg-emerald-50 {
+  background-color: #0d2018 !important;
+}
+
+html.dark .bg-emerald-100 {
+  background-color: #0f2a1e !important;
+}
+
+/* ── Dark mode: Rose tints ───────────────────────── */
+html.dark .bg-rose-50 {
+  background-color: #2d1018 !important;
+}
+
+html.dark .bg-rose-100 {
+  background-color: #3a1320 !important;
+}
+
+/* ── Dark mode: Violet tints ─────────────────────── */
+html.dark .bg-violet-50,
+html.dark .bg-violet-100 {
+  background-color: #1e1535 !important;
+}
+
+/* ── Dark mode: Blue-100 ─────────────────────────── */
+html.dark .bg-blue-100 {
+  background-color: #1e3a5f !important;
+}
+
+/* ── Dark mode: Text colors in color contexts ────── */
+html.dark .text-blue-800 {
+  color: #93c5fd !important;
+}
+
+html.dark .text-amber-600 {
+  color: #fbbf24 !important;
+}
+
+html.dark .text-emerald-600 {
+  color: #34d399 !important;
+}
+
+html.dark .text-rose-600 {
+  color: #fb7185 !important;
+}
+
+html.dark .text-violet-600 {
+  color: #a78bfa !important;
+}
+
+/* ── Dark mode: bg-blue-50 hover ─────────────────── */
+html.dark .hover\:bg-blue-50:hover {
+  background-color: #1e3a5f !important;
+}
+
+html.dark .hover\:text-blue-700:hover {
+  color: #93c5fd !important;
+}

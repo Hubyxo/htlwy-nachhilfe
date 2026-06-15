@@ -148,27 +148,27 @@ const Navbar: React.FC = () => {
                     </button>
 
                     {isProfileOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-fade-down">
-                        <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-blue-50/50 border-b border-gray-100">
-                          <p className="text-sm font-semibold text-gray-900 truncate">{user?.display_name}</p>
-                          <p className="text-xs text-gray-500 truncate mt-0.5">{user?.email}</p>
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden z-50 animate-fade-down">
+                        <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-blue-50/50 dark:from-slate-700 dark:to-slate-700/80 border-b border-gray-100 dark:border-slate-600">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{user?.display_name}</p>
+                          <p className="text-xs text-gray-500 dark:text-slate-400 truncate mt-0.5">{user?.email}</p>
                         </div>
                         <div className="py-1.5">
                           {profileMenuItems.map((item) => (
                             <button
                               key={item.path}
                               onClick={() => handleProfileNav(item.path)}
-                              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors text-left"
+                              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-left"
                             >
-                              <item.icon size={15} className="flex-shrink-0 text-gray-400" />
+                              <item.icon size={15} className="flex-shrink-0 text-gray-400 dark:text-slate-500" />
                               <span>{item.label}</span>
                             </button>
                           ))}
                         </div>
-                        <div className="border-t border-gray-100 py-1.5">
+                        <div className="border-t border-gray-100 dark:border-slate-700 py-1.5">
                           <button
                             onClick={handleLogout}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors text-left"
                           >
                             <LogOut size={15} className="flex-shrink-0" />
                             <span>Abmelden</span>
@@ -206,15 +206,15 @@ const Navbar: React.FC = () => {
           isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="bg-white/95 backdrop-blur-xl border-t border-gray-100 px-4 py-4 space-y-1 shadow-lg">
+        <div className="bg-white/95 dark:bg-slate-900/97 backdrop-blur-xl border-t border-gray-100 dark:border-slate-700 px-4 py-4 space-y-1 shadow-lg">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               className={`flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                 location.pathname === link.path
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                  : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800'
               }`}
             >
               {link.name}
@@ -223,26 +223,26 @@ const Navbar: React.FC = () => {
 
           {isAuthenticated ? (
             <>
-              <div className="flex items-center gap-3 px-4 py-3 border-t border-gray-100 mt-2">
+              <div className="flex items-center gap-3 px-4 py-3 border-t border-gray-100 dark:border-slate-700 mt-2">
                 <Avatar size="md" />
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{user?.display_name}</p>
-                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{user?.display_name}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 truncate">{user?.email}</p>
                 </div>
               </div>
               {profileMenuItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <item.icon size={16} className="text-gray-400" />
+                  <item.icon size={16} className="text-gray-400 dark:text-slate-500" />
                   <span>{item.label}</span>
                 </Link>
               ))}
               <button
                 onClick={() => { logout(); }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-red-600 hover:bg-red-50 transition-colors border-t border-gray-100 mt-1 w-full"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors border-t border-gray-100 dark:border-slate-700 mt-1 w-full"
               >
                 <LogOut size={16} />
                 <span>Abmelden</span>
@@ -259,9 +259,9 @@ const Navbar: React.FC = () => {
 
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors w-full"
           >
-            {theme === 'dark' ? <Sun size={16} className="text-gray-400" /> : <Moon size={16} className="text-gray-400" />}
+            {theme === 'dark' ? <Sun size={16} className="text-gray-400 dark:text-slate-500" /> : <Moon size={16} className="text-gray-400" />}
             <span>{theme === 'dark' ? 'Heller Modus' : 'Dunkler Modus'}</span>
           </button>
         </div>
