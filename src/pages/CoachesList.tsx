@@ -138,6 +138,27 @@ const CoachesList: React.FC = () => {
         read: false,
       });
 
+      // Send email to coach
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            to: tutor.email,
+            type: 'booking_request',
+            data: {
+              studentName: user.display_name,
+              studentEmail: user.email,
+              subject: selected,
+            },
+          }),
+        }).catch((err) => console.error('Email error:', err));
+      }
+
       setBookingState({ coachId: tutor.id, status: 'success' });
       setTimeout(() => setBookingState(null), 4000);
     } catch (err) {
