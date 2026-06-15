@@ -30,7 +30,7 @@ async function sendEmail(payload: EmailPayload): Promise<boolean> {
     return false;
   }
 
-  const  = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: GMAIL_USER,
@@ -38,87 +38,28 @@ async function sendEmail(payload: EmailPayload): Promise<boolean> {
     },
   });
 
-  let html: string;
+  let text: string;
   let subject: string;
 
   switch (payload.type) {
     case "booking_request": {
       const { studentName, studentEmail, subject: fach } = payload.data;
       subject = `Neue Buchungsanfrage für ${fach || "Nachhilfe"}`;
-      html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
-          <div style="background-color: white; border-radius: 12px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <h1 style="color: #1f2937; font-size: 24px; margin-bottom: 20px;">Neue Buchungsanfrage</h1>
-            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Du hast eine neue Buchungsanfrage erhalten:</p>
-            <div style="background-color: #f3f4f6; border-radius: 8px; padding: 16px; margin: 20px 0;">
-              <p style="margin: 0 0 8px 0;"><strong style="color: #1f2937;">Schüler:</strong> <span style="color: #4b5563;">${studentName}</span></p>
-              <p style="margin: 0 0 8px 0;"><strong style="color: #1f2937;">E-Mail:</strong> <span style="color: #4b5563;">${studentEmail}</span></p>
-              <p style="margin: 0;"><strong style="color: #1f2937;">Fach:</strong> <span style="color: #4b5563;">${fach}</span></p>
-            </div>
-            <a href="${WEBSITE_URL}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 10px;">
-              Zur Website
-            </a>
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-              Diese E-Mail wurde automatisch versendet. Bitte antworte nicht darauf.
-            </p>
-          </div>
-        </div>
-      `;
+      text = `Neue Buchungsanfrage\n\nSchüler: ${studentName}\nE-Mail: ${studentEmail}\nFach: ${fach}\n\n${WEBSITE_URL}\n\n--\nAutomatisch versendete Nachricht.`;
       break;
     }
 
     case "booking_confirmed": {
       const { coachName, coachEmail, subject: fach } = payload.data;
       subject = `Deine Buchungsanfrage wurde bestätigt`;
-      html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
-          <div style="background-color: white; border-radius: 12px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <h1 style="color: #059669; font-size: 24px; margin-bottom: 20px;">Buchung bestätigt!</h1>
-            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Gute Neuigkeiten! Deine Buchungsanfrage wurde bestätigt.</p>
-            <div style="background-color: #ecfdf5; border-radius: 8px; padding: 16px; margin: 20px 0; border: 1px solid #a7f3d0;">
-              <p style="margin: 0 0 8px 0;"><strong style="color: #1f2937;">Coach:</strong> <span style="color: #4b5563;">${coachName}</span></p>
-              <p style="margin: 0 0 8px 0;"><strong style="color: #1f2937;">E-Mail:</strong> <span style="color: #4b5563;">${coachEmail}</span></p>
-              <p style="margin: 0;"><strong style="color: #1f2937;">Fach:</strong> <span style="color: #4b5563;">${fach}</span></p>
-            </div>
-            <a href="${WEBSITE_URL}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 10px;">
-              Zur Website
-            </a>
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-              Diese E-Mail wurde automatisch versendet. Bitte antworte nicht darauf.
-            </p>
-          </div>
-        </div>
-      `;
+      text = `Buchung bestätigt!\n\nDeine Buchungsanfrage wurde bestätigt.\n\nCoach: ${coachName}\nE-Mail: ${coachEmail}\nFach: ${fach}\n\n${WEBSITE_URL}\n\n--\nAutomatisch versendete Nachricht.`;
       break;
     }
 
     case "booking_rejected": {
       const { coachName, subject: fach, reason } = payload.data;
       subject = `Deine Buchungsanfrage wurde abgelehnt`;
-      html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
-          <div style="background-color: white; border-radius: 12px; padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <h1 style="color: #dc2626; font-size: 24px; margin-bottom: 20px;">Buchung abgelehnt</h1>
-            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">Leider wurde deine Buchungsanfrage abgelehnt.</p>
-            <div style="background-color: #fef2f2; border-radius: 8px; padding: 16px; margin: 20px 0; border: 1px solid #fecaca;">
-              <p style="margin: 0 0 8px 0;"><strong style="color: #1f2937;">Coach:</strong> <span style="color: #4b5563;">${coachName}</span></p>
-              <p style="margin: 0;"><strong style="color: #1f2937;">Fach:</strong> <span style="color: #4b5563;">${fach}</span></p>
-            </div>
-            ${reason ? `
-              <div style="background-color: #f3f4f6; border-radius: 8px; padding: 16px; margin: 20px 0;">
-                <p style="margin: 0 0 8px 0; color: #1f2937; font-weight: 600;">Begründung:</p>
-                <p style="margin: 0; color: #4b5563; font-style: italic;">"${reason}"</p>
-              </div>
-            ` : ""}
-            <a href="${WEBSITE_URL}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 10px;">
-              Anderen Coach finden
-            </a>
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-              Diese E-Mail wurde automatisch versendet. Bitte antworte nicht darauf.
-            </p>
-          </div>
-        </div>
-      `;
+      text = `Buchung abgelehnt\n\nLeider wurde deine Buchungsanfrage abgelehnt.\n\nCoach: ${coachName}\nFach: ${fach}${reason ? `\nBegründung: ${reason}` : ""}\n\n${WEBSITE_URL}\n\n--\nAutomatisch versendete Nachricht.`;
       break;
     }
 
@@ -127,11 +68,11 @@ async function sendEmail(payload: EmailPayload): Promise<boolean> {
   }
 
   try {
-    await .sendMail({
+    await transporter.sendMail({
       from: `"HTL Nachhilfe" <${GMAIL_USER}>`,
       to: payload.to,
       subject,
-      html,
+      text,
     });
     console.log(`Email sent successfully to ${payload.to} (type: ${payload.type})`);
     return true;
