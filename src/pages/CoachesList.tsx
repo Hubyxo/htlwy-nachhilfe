@@ -32,6 +32,7 @@ const CoachesList: React.FC = () => {
   const [coaches, setCoaches] = useState<Tutor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
+  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [selectedCoach, setSelectedCoach] = useState<Tutor | null>(null);
   const [bookingState, setBookingState] = useState<BookingState | null>(null);
   const [subjectModal, setSubjectModal] = useState<SubjectModalState | null>(null);
@@ -43,13 +44,6 @@ const CoachesList: React.FC = () => {
     'Elektrotechnik': { bg: '#fec601', text: '#000' },
     'Mechatronik': { bg: '#97c81e', text: '#fff' },
   };
-
-  const allSubjects = [
-    'Mathematik', 'Deutsch', 'Englisch', 'Physik', 'Chemie',
-    'Geschichte', 'Geographie', 'Informationstechnische Fächer',
-    'Maschinenbautechnische Fächer', 'Wirtschaftliche Fächer',
-    'Mechatronische Fächer', 'Elektrotechnische Fächer',
-  ];
 
   useEffect(() => {
     const fetchCoaches = async () => {
@@ -69,8 +63,8 @@ const CoachesList: React.FC = () => {
     fetchCoaches();
   }, []);
 
-  const filteredCoaches = selectedSubject
-    ? coaches.filter((coach) => coach.subjects.includes(selectedSubject))
+  const filteredCoaches = selectedDepartment
+    ? coaches.filter((coach) => coach.department === selectedDepartment)
     : coaches;
 
   const openBookingModal = async (tutor: Tutor) => {
@@ -199,19 +193,19 @@ const CoachesList: React.FC = () => {
             <div className="relative flex-1 min-w-0">
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
               <select
-                value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
+                value={selectedDepartment}
+                onChange={(e) => setSelectedDepartment(e.target.value)}
                 className="w-full pl-4 pr-10 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer bg-white text-sm transition-all"
               >
-                <option value="">Alle Fächer</option>
-                {allSubjects.map((subject) => (
-                  <option key={subject} value={subject}>{subject}</option>
+                <option value="">Alle Abteilungen</option>
+                {Object.keys(departmentColors).map((dept) => (
+                  <option key={dept} value={dept}>{dept}</option>
                 ))}
               </select>
             </div>
-            {selectedSubject && (
+            {selectedDepartment && (
               <button
-                onClick={() => setSelectedSubject('')}
+                onClick={() => setSelectedDepartment('')}
                 className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors flex-shrink-0"
               >
                 <X size={14} />
@@ -252,8 +246,8 @@ const CoachesList: React.FC = () => {
               </div>
               <p className="text-gray-900 font-semibold text-lg mb-2">Keine Coaches gefunden</p>
               <p className="text-gray-500 text-sm">
-                {selectedSubject
-                  ? `Kein Coach bietet "${selectedSubject}" an. Versuch einen anderen Filter.`
+                {selectedDepartment
+                  ? `Kein Coach aus der Abteilung "${selectedDepartment}". Versuch einen anderen Filter.`
                   : 'Noch keine Coaches registriert.'}
               </p>
             </div>
