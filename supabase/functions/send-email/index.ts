@@ -30,7 +30,7 @@ async function sendEmail(payload: EmailPayload): Promise<boolean> {
     return false;
   }
 
-  const transporter = nodemailer.createTransport({
+  const  = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: GMAIL_USER,
@@ -127,7 +127,7 @@ async function sendEmail(payload: EmailPayload): Promise<boolean> {
   }
 
   try {
-    await transporter.sendMail({
+    await .sendMail({
       from: `"HTL Nachhilfe" <${GMAIL_USER}>`,
       to: payload.to,
       subject,
