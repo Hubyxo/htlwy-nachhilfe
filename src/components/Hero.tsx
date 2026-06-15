@@ -22,7 +22,7 @@ const Hero: React.FC = () => {
             Nachhilfe von Schülern für Schüler
           </h1>
           <p className="text-lg md:text-xl text-blue-100 mb-8">
-            DieNachhilfeplattform der HTL Waidhofen/Ybbs. Melde dich als Coach an, wähle deine Fächer – und Schüler können dich direkt buchen.
+            Die Nachhilfeplattform der HTL Waidhofen/Ybbs. Melde dich als Coach an, wähle deine Fächer – und Schüler können dich direkt buchen.
           </p>
           {isAuthenticated ? (
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
