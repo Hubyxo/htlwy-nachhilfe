@@ -77,7 +77,7 @@ const TutorApplication: React.FC = () => {
               <>
                 <Link
                   to="/tutor-werden/formular"
-                  className="group inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                  className="group inline-flex items-center gap-2 bg-blue-600 dark:bg-white text-white dark:text-gray-900 px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 dark:hover:bg-gray-100 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                 >
                   Coach-Profil erstellen
                   <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform duration-200" />
