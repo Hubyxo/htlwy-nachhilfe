@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Banknote, BookOpenCheck, MessageSquare, Star, UserCheck } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const TutorApplication: React.FC = () => {
+  const { user } = useAuth();
+  const isCoach = user?.role === 'coach';
   const benefits = [
     { icon: <BookOpenCheck size={18} />, color: 'bg-blue-100 text-blue-600', text: 'Festige dein eigenes Wissen durch das Erklären' },
     { icon: <Star size={18} />, color: 'bg-amber-100 text-amber-600', text: 'Sammle wertvolle Erfahrungen für deinen Lebenslauf' },
@@ -59,14 +62,29 @@ const TutorApplication: React.FC = () => {
 
           {/* CTA */}
           <div className="text-center pt-2">
-            <Link
-              to="/tutor-werden/formular"
-              className="group inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
-            >
-              Coach-Profil erstellen
-              <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform duration-200" />
-            </Link>
-            <p className="text-sm text-gray-400 mt-3">Kostenlos & sofort sichtbar in der Coach-Liste</p>
+            {isCoach ? (
+              <>
+                <button
+                  disabled
+                  className="inline-flex items-center gap-2 bg-gray-300 text-gray-500 px-8 py-4 rounded-xl font-semibold cursor-not-allowed"
+                >
+                  Coach-Profil erstellen
+                  <ArrowRight size={17} />
+                </button>
+                <p className="text-sm text-gray-400 mt-3">Du bist bereits als Coach registriert.</p>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/tutor-werden/formular"
+                  className="group inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-gray-800 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  Coach-Profil erstellen
+                  <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform duration-200" />
+                </Link>
+                <p className="text-sm text-gray-400 mt-3">Kostenlos & sofort sichtbar in der Coach-Liste</p>
+              </>
+            )}
           </div>
         </div>
       </div>
