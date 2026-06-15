@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ExternalLink, ArrowRight } from 'lucide-react';
+import { Mail, MapPin, ExternalLink, ArrowRight } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -106,12 +106,8 @@ const Footer: React.FC = () => {
                 <span className="text-gray-500 text-sm">Im Vogelsang 8, 3340 Waidhofen/Ybbs</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone size={15} className="text-gray-500 flex-shrink-0" />
-                <span className="text-gray-500 text-sm">+43 7442 52590</span>
-              </li>
-              <li className="flex items-center gap-3">
                 <Mail size={15} className="text-gray-500 flex-shrink-0" />
-                <span className="text-gray-500 text-sm">office@htlwy.at</span>
+                <span className="text-gray-500 text-sm">oliver.spring@htlwy.at</span>
               </li>
               <li className="flex items-center gap-3">
                 <ExternalLink size={15} className="text-gray-500 flex-shrink-0" />
