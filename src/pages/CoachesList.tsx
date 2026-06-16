@@ -340,7 +340,7 @@ const CoachesList: React.FC = () => {
 
       {/* Detail modal */}
       {selectedCoach && (
-        <CoachDetail coach={selectedCoach} onClose={() => setSelectedCoach(null)} />
+        <CoachDetail coach={selectedCoach} onClose={() => setSelectedCoach(null)} onBook={(coach) => { setSelectedCoach(null); openBookingModal(coach); }} />
       )}
 
       {/* Subject selection modal */}

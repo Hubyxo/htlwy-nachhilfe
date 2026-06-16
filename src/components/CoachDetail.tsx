@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Mail, BookOpen, Clock, Info, GraduationCap } from 'lucide-react';
+import { X, BookOpen, Clock, Info, CalendarPlus } from 'lucide-react';
 
 interface Tutor {
   id: string;
@@ -15,6 +15,7 @@ interface Tutor {
 interface CoachDetailProps {
   coach: Tutor;
   onClose: () => void;
+  onBook: (coach: Tutor) => void;
 }
 
 const departmentColors: Record<string, { bg: string; text: string }> = {
@@ -25,7 +26,7 @@ const departmentColors: Record<string, { bg: string; text: string }> = {
   'Mechatronik': { bg: '#97c81e', text: '#fff' },
 };
 
-const CoachDetail: React.FC<CoachDetailProps> = ({ coach, onClose }) => {
+const CoachDetail: React.FC<CoachDetailProps> = ({ coach, onClose, onBook }) => {
   const deptColor = departmentColors[coach.department] || { bg: '#6b7280', text: '#fff' };
 
   return (
@@ -123,15 +124,15 @@ const CoachDetail: React.FC<CoachDetailProps> = ({ coach, onClose }) => {
           )}
         </div>
 
-        {/* Footer — contact */}
+        {/* Footer — booking */}
         <div className="px-6 pb-6 pt-4 border-t border-gray-100 dark:border-slate-700">
-          <a
-            href={`mailto:${coach.email}`}
+          <button
+            onClick={() => { onClose(); onBook(coach); }}
             className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-md"
           >
-            <Mail size={15} />
-            {coach.email}
-          </a>
+            <CalendarPlus size={15} />
+            Coach buchen
+          </button>
         </div>
       </div>
     </div>
