@@ -54,8 +54,8 @@ const Navbar: React.FC = () => {
 
   const profileMenuItems = [
     { label: 'Mein Profil', path: '/profil', icon: User, coachOnly: false, studentOnly: false },
-    { label: 'Buchungsanfragen', path: '/buchungsanfragen', icon: Inbox, coachOnly: true, studentOnly: false },
-    { label: 'Meine Coachings', path: '/meine-coachings', icon: ClipboardList, coachOnly: true, studentOnly: false },
+    { label: 'Offene Anfragen', path: '/buchungsanfragen', icon: Inbox, coachOnly: true, studentOnly: false },
+    { label: 'Aktive Coachings', path: '/meine-coachings', icon: ClipboardList, coachOnly: true, studentOnly: false },
     { label: 'Buchungen', path: '/buchungen', icon: CalendarClock, coachOnly: false, studentOnly: true },
     { label: 'Meine Coaches', path: '/meine-coaches', icon: GraduationCap, coachOnly: false, studentOnly: false },
   ].filter((item) => {

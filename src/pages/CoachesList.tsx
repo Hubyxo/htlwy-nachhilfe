@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, CalendarPlus, CircleCheck as CheckCircle, CircleAlert as AlertCircle, X, Search, GraduationCap, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, CalendarPlus, CircleCheck as CheckCircle, CircleAlert as AlertCircle, X, Search, GraduationCap, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import CoachDetail from '../components/CoachDetail';
@@ -245,11 +245,20 @@ const CoachesList: React.FC = () => {
                 <Search size={24} className="text-gray-400" />
               </div>
               <p className="text-gray-900 font-semibold text-lg mb-2">Keine Coaches gefunden</p>
-              <p className="text-gray-500 text-sm">
-                {selectedDepartment
-                  ? `Kein Coach aus der Abteilung "${selectedDepartment}". Versuch einen anderen Filter.`
-                  : 'Noch keine Coaches registriert.'}
-              </p>
+              {selectedDepartment ? (
+                <p className="text-gray-500 text-sm">Kein Coach aus der Abteilung "{selectedDepartment}". Versuch einen anderen Filter.</p>
+              ) : (
+                <>
+                  <p className="text-gray-500 text-sm mb-6">Noch hat sich kein Schüler als Coach registriert.</p>
+                  <a
+                    href="/tutor-werden"
+                    className="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-md"
+                  >
+                    Als Coach registrieren
+                    <ArrowRight size={15} />
+                  </a>
+                </>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

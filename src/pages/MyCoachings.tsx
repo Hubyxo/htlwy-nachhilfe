@@ -118,7 +118,7 @@ const MyCoachings: React.FC = () => {
                 </span>
               )}
             </div>
-            <h1 className="text-4xl font-black text-white mb-2">Buchungsanfragen</h1>
+            <h1 className="text-4xl font-black text-white mb-2">Offene Anfragen</h1>
             <p className="text-blue-100/60">Verwalte eingehende Anfragen von Schülern</p>
           </div>
         </div>

@@ -86,7 +86,7 @@ const MeineCoachings: React.FC = () => {
                 </span>
               )}
             </div>
-            <h1 className="text-4xl font-black text-white mb-2">Meine Coachings</h1>
+            <h1 className="text-4xl font-black text-white mb-2">Aktive Coachings</h1>
             <p className="text-blue-100/60">Schüler, die du als Coach betreust oder betreut hast</p>
           </div>
         </div>

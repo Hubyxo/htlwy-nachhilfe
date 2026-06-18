@@ -1,5 +1,6 @@
-import React from 'react';
-import { X, BookOpen, Clock, Info, CalendarPlus } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, BookOpen, Clock, Info, CalendarPlus, Star } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface Tutor {
   id: string;
@@ -26,8 +27,36 @@ const departmentColors: Record<string, { bg: string; text: string }> = {
   'Mechatronik': { bg: '#97c81e', text: '#fff' },
 };
 
+const StarDisplay: React.FC<{ value: number; size?: number }> = ({ value, size = 14 }) => (
+  <div className="flex gap-0.5">
+    {[1, 2, 3, 4, 5].map((s) => (
+      <Star
+        key={s}
+        size={size}
+        className={s <= Math.round(value) ? 'text-amber-400 fill-amber-400' : 'text-gray-200 fill-gray-200'}
+      />
+    ))}
+  </div>
+);
+
 const CoachDetail: React.FC<CoachDetailProps> = ({ coach, onClose, onBook }) => {
   const deptColor = departmentColors[coach.department] || { bg: '#6b7280', text: '#fff' };
+  const [avgRating, setAvgRating] = useState<{ score: number; count: number } | null>(null);
+
+  useEffect(() => {
+    const fetchRating = async () => {
+      const { data: coachUser } = await supabase.from('users').select('id').eq('email', coach.email).maybeSingle();
+      if (!coachUser) return;
+      const { data: coachProfile } = await supabase.from('coach_profiles').select('id').eq('user_id', coachUser.id).maybeSingle();
+      if (!coachProfile) return;
+      const { data: rows } = await supabase.from('ratings').select('score').eq('coach_id', coachProfile.id);
+      if (rows && rows.length > 0) {
+        const avg = rows.reduce((sum, r) => sum + r.score, 0) / rows.length;
+        setAvgRating({ score: avg, count: rows.length });
+      }
+    };
+    fetchRating();
+  }, [coach.email]);
 
   return (
     <div
@@ -52,9 +81,19 @@ const CoachDetail: React.FC<CoachDetailProps> = ({ coach, onClose, onBook }) => 
               <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100 leading-tight">
                 {coach.full_name}
               </h2>
-              {coach.school_year && (
-                <p className="text-sm text-gray-400 dark:text-slate-500 mt-0.5">{coach.school_year}</p>
-              )}
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                {coach.school_year && (
+                  <p className="text-sm text-gray-400 dark:text-slate-500">{coach.school_year}</p>
+                )}
+                {avgRating && (
+                  <div className="flex items-center gap-1.5">
+                    <StarDisplay value={avgRating.score} size={12} />
+                    <span className="text-xs text-gray-400 dark:text-slate-500">
+                      {avgRating.score.toFixed(1)} ({avgRating.count})
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
@@ -120,6 +159,25 @@ const CoachDetail: React.FC<CoachDetailProps> = ({ coach, onClose, onBook }) => 
               <p className="text-sm text-gray-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
                 {coach.additional_info}
               </p>
+            </div>
+          )}
+
+          {/* Rating block */}
+          {avgRating && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Star size={13} className="text-gray-400 dark:text-slate-500" />
+                <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide">Bewertung</p>
+              </div>
+              <div className="flex items-center gap-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-xl px-4 py-3">
+                <span className="text-2xl font-black text-gray-900 dark:text-slate-100">{avgRating.score.toFixed(1)}</span>
+                <div>
+                  <StarDisplay value={avgRating.score} size={16} />
+                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+                    Basierend auf {avgRating.count} {avgRating.count === 1 ? 'Bewertung' : 'Bewertungen'}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
         </div>
