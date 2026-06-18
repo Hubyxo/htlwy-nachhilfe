@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Trash2, CreditCard as Edit2, LogOut, CircleAlert as AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Pencil, LogOut, CircleAlert as AlertCircle, TriangleAlert } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import AdminCoachForm from '../components/AdminCoachForm';
 
@@ -18,6 +18,7 @@ const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
   const [coaches, setCoaches] = useState<Tutor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [selectedCoach, setSelectedCoach] = useState<Tutor | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -36,11 +37,13 @@ const AdminPanel: React.FC = () => {
   const fetchCoaches = async () => {
     try {
       setIsLoading(true);
+      setLoadError(false);
       const { data, error } = await supabase.from('tutors').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       setCoaches(data || []);
     } catch (err) {
       console.error('Fehler beim Laden der Coaches:', err);
+      setLoadError(true);
     } finally {
       setIsLoading(false);
     }
@@ -51,12 +54,13 @@ const AdminPanel: React.FC = () => {
     try {
       const coach = coaches.find(c => c.id === id);
 
-      const { error } = await supabase.from('tutors').delete().eq('id', id);
-      if (error) throw error;
-
+      // Demote first so role is cleaned up even if the tutors row delete fails
       if (coach?.email) {
         await supabase.rpc('admin_demote_coach', { coach_email: coach.email });
       }
+
+      const { error } = await supabase.from('tutors').delete().eq('id', id);
+      if (error) throw error;
 
       setCoaches(coaches.filter(c => c.id !== id));
       setDeleteConfirm(null);
@@ -121,6 +125,18 @@ const AdminPanel: React.FC = () => {
               </div>
               <p className="mt-4 text-gray-600">Coaches werden geladen...</p>
             </div>
+          ) : loadError ? (
+            <div className="bg-white rounded-lg shadow-md p-12 text-center">
+              <TriangleAlert className="h-12 w-12 text-red-400 mx-auto mb-4" />
+              <p className="text-gray-900 font-semibold mb-1">Laden fehlgeschlagen</p>
+              <p className="text-gray-500 text-sm mb-4">Die Coaches konnten nicht geladen werden.</p>
+              <button
+                onClick={fetchCoaches}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+              >
+                Erneut versuchen
+              </button>
+            </div>
           ) : coaches.length === 0 ? (
             <div className="bg-white rounded-lg shadow-md p-12 text-center">
               <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -170,7 +186,7 @@ const AdminPanel: React.FC = () => {
                               className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                               title="Bearbeiten"
                             >
-                              <Edit2 className="h-4 w-4" />
+                              <Pencil className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => setDeleteConfirm(coach.id)}
