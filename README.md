@@ -20,8 +20,6 @@ Webplattform zur Vermittlung von schulinterner Nachhilfe an der HTL Waidhofen an
 - [Projektstruktur](#projektstruktur)
 - [Eigenes Backend aufsetzen](#eigenes-backend-aufsetzen)
   - [Voraussetzungen](#voraussetzungen)
-  - [Setup](#setup)
-  - [Umgebungsvariablen](#umgebungsvariablen)
   - [Supabase einrichten](#supabase-einrichten)
   - [Azure AD einrichten](#azure-ad-einrichten)
 - [Entwicklung](#entwicklung)
@@ -49,7 +47,7 @@ VITE_SUPABASE_URL=https://<dein-projekt>.supabase.co
 VITE_SUPABASE_ANON_KEY=<dein-supabase-anon-key>
 ```
 
-> Den `anon`-Key findest du im Supabase-Dashboard unter **Project Settings → API → Project API keys → `anon` `public`**.
+> Den `anon`-Key findest du im Supabase-Dashboard unter **Project Settings → API → Project API keys → `anon` `public`**. Beide Variablen müssen mit `VITE_` beginnen, sonst bindet Vite sie nicht ein. Der `anon`-Key ist öffentlich – die Absicherung erfolgt über RLS, nicht über Geheimhaltung des Keys.
 
 ```bash
 npm run dev    # http://localhost:5173
@@ -155,40 +153,13 @@ htlwy-nachhilfe/
 
 ## Eigenes Backend aufsetzen
 
-Die folgenden Abschnitte beschreiben, wie du eine **eigene** Supabase- und Azure-Umgebung von Grund auf aufsetzt – z. B. zum Forken des Projekts oder für ein separates Test-Backend. Wenn du nur lokal gegen das bestehende Backend arbeiten willst, genügt der [Schnellstart](#schnellstart-lokal-gegen-bestehendes-backend) oben.
+Die folgenden Abschnitte beschreiben, wie du eine **eigene** Supabase- und Azure-Umgebung von Grund auf aufsetzt – z. B. zum Forken des Projekts oder für ein separates Test-Backend. Clone, `npm install` und das Anlegen der `.env` sind identisch zum [Schnellstart](#schnellstart-lokal-gegen-bestehendes-backend); hier kommt nur die Backend-seitige Einrichtung dazu. Wenn du nur lokal gegen das bestehende Backend arbeiten willst, genügt der Schnellstart.
 
 ### Voraussetzungen
 
 - [Node.js](https://nodejs.org/) (LTS empfohlen) und npm
 - Ein [Supabase](https://supabase.com/)-Projekt
 - Eine registrierte App in [Azure AD / Microsoft Entra](https://entra.microsoft.com/) der HTL
-
----
-
-### Setup
-
-```bash
-git clone https://github.com/Hubyxo/htlwy-nachhilfe.git
-cd htlwy-nachhilfe
-npm install
-```
-
-Anschließend `.env` anlegen (siehe [Umgebungsvariablen](#umgebungsvariablen)) und den Dev-Server starten.
-
----
-
-### Umgebungsvariablen
-
-Lege eine Datei `.env` im Projektwurzelverzeichnis an:
-
-```env
-VITE_SUPABASE_URL=https://<dein-projekt>.supabase.co
-VITE_SUPABASE_ANON_KEY=<dein-supabase-anon-key>
-```
-
-> Nur diese beiden Variablen werden im Frontend gelesen. Die Azure-Client-ID und das Secret werden **nicht** im Frontend gesetzt, sondern im Supabase-Dashboard beim Azure-Provider hinterlegt (siehe [Azure AD einrichten](#azure-ad-einrichten)).
->
-> Alle clientseitig genutzten Variablen müssen mit `VITE_` beginnen, sonst werden sie von Vite nicht eingebunden. Der `anon`-Key ist öffentlich – die Absicherung erfolgt über RLS, **nicht** über Geheimhaltung des Keys.
 
 ---
 
