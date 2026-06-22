@@ -19,9 +19,6 @@ Webplattform zur Vermittlung von schulinterner Nachhilfe an der HTL Waidhofen an
 - [Architektur](#architektur)
 - [Projektstruktur](#projektstruktur)
 - [Eigenes Backend aufsetzen](#eigenes-backend-aufsetzen)
-  - [Voraussetzungen](#voraussetzungen)
-  - [Supabase einrichten](#supabase-einrichten)
-  - [Azure AD einrichten](#azure-ad-einrichten)
 - [Entwicklung](#entwicklung)
 - [Build & Deployment](#build--deployment)
 - [Klassenerkennung](#klassenerkennung)
@@ -153,46 +150,9 @@ htlwy-nachhilfe/
 
 ## Eigenes Backend aufsetzen
 
-Die folgenden Abschnitte beschreiben, wie du eine **eigene** Supabase- und Azure-Umgebung von Grund auf aufsetzt – z. B. zum Forken des Projekts oder für ein separates Test-Backend. Clone, `npm install` und das Anlegen der `.env` sind identisch zum [Schnellstart](#schnellstart-lokal-gegen-bestehendes-backend); hier kommt nur die Backend-seitige Einrichtung dazu. Wenn du nur lokal gegen das bestehende Backend arbeiten willst, genügt der Schnellstart.
+Wenn du eine **eigene** Supabase- und Azure-Umgebung von Grund auf aufbaust (z. B. beim Forken oder für ein separates Test-Backend), findest du die vollständige Schritt-für-Schritt-Anleitung in **[SETUP.md](./SETUP.md)** – inklusive Supabase-Projekt, Migrationen, Edge Function, Azure-Provider und Redirect-URLs.
 
-### Voraussetzungen
-
-- [Node.js](https://nodejs.org/) (LTS empfohlen) und npm
-- Ein [Supabase](https://supabase.com/)-Projekt
-- Eine registrierte App in [Azure AD / Microsoft Entra](https://entra.microsoft.com/) der HTL
-
----
-
-### Supabase einrichten
-
-1. Neues Supabase-Projekt erstellen.
-2. Migrationen aus `supabase/migrations/` einspielen (Supabase CLI oder SQL-Editor). Sie erstellen die Tabellen und RLS-Policies, u. a.:
-   - `users` – Benutzerprofile
-   - `coach_profiles` – Coach-spezifische Daten
-   - `tutors` – im Admin-Panel verwaltete Coach-Einträge
-   - `bookings` – Buchungen zwischen Schüler:innen und Coaches
-   - `ratings` – Bewertungen
-   - `notifications` – Benachrichtigungen
-   - Admin-Support (`admin_sessions`) und zugehörige Policies
-3. Edge Function `send-email` deployen:
-   ```bash
-   supabase functions deploy send-email
-   ```
-4. Azure als Auth-Provider unter **Authentication → Providers** aktivieren und dort Client-ID und Secret hinterlegen.
-
----
-
-### Azure AD einrichten
-
-1. App in Azure AD / Microsoft Entra registrieren.
-2. **Application (client) ID** und ein **Client Secret** erzeugen.
-3. Client-ID und Secret im Supabase-Dashboard unter **Authentication → Providers → Azure** eintragen (nicht im Frontend-`.env`).
-4. Als Redirect-URI in Azure die Callback-URL von Supabase hinterlegen (Form: `https://<dein-projekt>.supabase.co/auth/v1/callback`).
-5. In Supabase unter **Authentication → URL Configuration** die **Site URL** und erlaubten Redirect-URLs setzen:
-   - `http://localhost:5173` (lokale Entwicklung)
-   - die Produktions-URL (z. B. `https://nachhilfe.htlwy.com`)
-
-> Der Login leitet nach `window.location.origin` zurück – die jeweilige Origin (localhost bzw. Produktion) muss in Supabase als erlaubte Redirect-URL eingetragen sein.
+Für reines lokales Arbeiten gegen das bestehende Backend genügt der [Schnellstart](#schnellstart-lokal-gegen-bestehendes-backend) oben.
 
 ---
 
