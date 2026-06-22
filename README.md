@@ -12,19 +12,60 @@ Webplattform zur Vermittlung von schulinterner Nachhilfe an der HTL Waidhofen an
 
 ## Inhaltsverzeichnis
 
+- [Schnellstart (lokal gegen bestehendes Backend)](#schnellstart-lokal-gegen-bestehendes-backend)
 - [Features](#features)
 - [Status & Geplant](#status--geplant)
 - [Tech-Stack](#tech-stack)
 - [Architektur](#architektur)
 - [Projektstruktur](#projektstruktur)
-- [Voraussetzungen](#voraussetzungen)
-- [Setup](#setup)
-- [Umgebungsvariablen](#umgebungsvariablen)
-- [Supabase einrichten](#supabase-einrichten)
-- [Azure AD einrichten](#azure-ad-einrichten)
+- [Eigenes Backend aufsetzen](#eigenes-backend-aufsetzen)
+  - [Voraussetzungen](#voraussetzungen)
+  - [Setup](#setup)
+  - [Umgebungsvariablen](#umgebungsvariablen)
+  - [Supabase einrichten](#supabase-einrichten)
+  - [Azure AD einrichten](#azure-ad-einrichten)
 - [Entwicklung](#entwicklung)
 - [Build & Deployment](#build--deployment)
 - [Klassenerkennung](#klassenerkennung)
+
+---
+
+## Schnellstart (lokal gegen bestehendes Backend)
+
+Für den häufigsten Fall: Du willst das Frontend lokal laufen lassen und nutzt das **bereits eingerichtete** Supabase-Backend. Dann brauchst du **keine** eigene Supabase- oder Azure-Konfiguration – nur Projekt-URL und anon-Key.
+
+Voraussetzung: Node LTS (mind. 18) und npm.
+
+```bash
+git clone https://github.com/Hubyxo/htlwy-nachhilfe.git
+cd htlwy-nachhilfe
+npm install
+```
+
+`.env` im Projekt-Root anlegen (eine Vorlage gibt es im Repo nicht):
+
+```env
+VITE_SUPABASE_URL=https://<dein-projekt>.supabase.co
+VITE_SUPABASE_ANON_KEY=<dein-supabase-anon-key>
+```
+
+> Den `anon`-Key findest du im Supabase-Dashboard unter **Project Settings → API → Project API keys → `anon` `public`**.
+
+```bash
+npm run dev    # http://localhost:5173
+```
+
+**Zwei Stolpersteine, die nicht zu Fehlermeldungen führen:**
+
+1. **Login funktioniert nur, wenn `http://localhost:5173` in Supabase als Redirect-URL erlaubt ist.** Eintragen unter **Authentication → URL Configuration → Redirect URLs**. Fehlt der Eintrag, kommst du nach dem Microsoft-Login nicht zurück in die App – ohne sichtbaren Fehler.
+2. **Fehlende oder falsche `.env` erzeugt keinen Crash.** Der Supabase-Client fällt auf leere Werte zurück (`src/lib/supabase.ts`), die App startet normal, aber jeder Datenbankzugriff schlägt still fehl. Wenn „nichts geht", prüfe zuerst die `.env`.
+
+> **Tipp:** `.env` steht nicht in der `.gitignore`. Vor dem ersten Commit ergänzen, damit sie nicht versehentlich eingecheckt wird:
+> ```bash
+> echo ".env" >> .gitignore
+> ```
+
+> **Hinweis:** Dieser Weg zeigt auf die *produktive* Supabase-Instanz. Lokale Logins legen echte Datensätze an. Für isoliertes Testen eine lokale Supabase-Instanz via CLI (`supabase start`, benötigt Docker) verwenden.
 
 ---
 
@@ -112,7 +153,11 @@ htlwy-nachhilfe/
 
 ---
 
-## Voraussetzungen
+## Eigenes Backend aufsetzen
+
+Die folgenden Abschnitte beschreiben, wie du eine **eigene** Supabase- und Azure-Umgebung von Grund auf aufsetzt – z. B. zum Forken des Projekts oder für ein separates Test-Backend. Wenn du nur lokal gegen das bestehende Backend arbeiten willst, genügt der [Schnellstart](#schnellstart-lokal-gegen-bestehendes-backend) oben.
+
+### Voraussetzungen
 
 - [Node.js](https://nodejs.org/) (LTS empfohlen) und npm
 - Ein [Supabase](https://supabase.com/)-Projekt
@@ -120,7 +165,7 @@ htlwy-nachhilfe/
 
 ---
 
-## Setup
+### Setup
 
 ```bash
 git clone https://github.com/Hubyxo/htlwy-nachhilfe.git
@@ -132,7 +177,7 @@ Anschließend `.env` anlegen (siehe [Umgebungsvariablen](#umgebungsvariablen)) u
 
 ---
 
-## Umgebungsvariablen
+### Umgebungsvariablen
 
 Lege eine Datei `.env` im Projektwurzelverzeichnis an:
 
@@ -147,7 +192,7 @@ VITE_SUPABASE_ANON_KEY=<dein-supabase-anon-key>
 
 ---
 
-## Supabase einrichten
+### Supabase einrichten
 
 1. Neues Supabase-Projekt erstellen.
 2. Migrationen aus `supabase/migrations/` einspielen (Supabase CLI oder SQL-Editor). Sie erstellen die Tabellen und RLS-Policies, u. a.:
@@ -166,7 +211,7 @@ VITE_SUPABASE_ANON_KEY=<dein-supabase-anon-key>
 
 ---
 
-## Azure AD einrichten
+### Azure AD einrichten
 
 1. App in Azure AD / Microsoft Entra registrieren.
 2. **Application (client) ID** und ein **Client Secret** erzeugen.
